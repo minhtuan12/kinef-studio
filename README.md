@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# Kinef Custom Phone Cases
 
-## Getting Started
+Next.js storefront and order system for custom phone cases, now paired with a routed admin workspace inspired by the Flux Dashboard layout style.
 
-First, run the development server:
+## Current feature set
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Public storefront and custom builder
+- MongoDB persistence for catalog items and orders
+- SePay payment option generation (50 percent deposit or 100 percent full payment)
+- Cloudinary uploads for reference images, case media, and charm media
+- Flux-style admin workspace with:
+  - `/admin` overview dashboard
+  - `/admin/cases` case management
+  - `/admin/charms` charm management
+  - `/admin/orders` order management and Excel export
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Copy `.env.example` to `.env.local`
+2. Fill MongoDB, Cloudinary, `ADMIN_API_KEY`, and SePay credentials
+3. Install dependencies
+4. Start the dev server
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+- `npm run dev` - start local development
+- `npm run build` - production build
+- `npm run start` - run production build
+- `npm run lint` - lint checks
 
-To learn more about Next.js, take a look at the following resources:
+## Main routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `/` - storefront, case builder, order creation, payment options
+- `/admin` - operations dashboard overview
+- `/admin/cases` - case management workspace
+- `/admin/charms` - charm management workspace
+- `/admin/orders` - order management workspace
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Main APIs
 
-## Deploy on Vercel
+- `GET /api/cases` - storefront case catalog
+- `GET /api/charms` - storefront charm catalog
+- `POST /api/orders` - create order
+- `GET /api/orders/[orderCode]/payment-options` - SePay payment options
+- `POST /api/upload` - Cloudinary upload
+- `GET|POST /api/admin/cases`
+- `PUT|DELETE /api/admin/cases/[id]`
+- `GET|POST /api/admin/charms`
+- `PUT|DELETE /api/admin/charms/[id]`
+- `GET /api/admin/orders`
+- `PUT /api/admin/orders/[id]`
+- `GET /api/admin/orders/export`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Admin remake notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The old single-file tabbed admin page was replaced with a nested App Router admin layout.
+- Shared client-side admin state now lives in `src/components/admin/admin-context.tsx`.
+- The UI keeps the existing CRUD, order status updates, payment edits, local key storage, uploads, and export flow.
+- The visual direction follows the Flux Dashboard pattern: persistent sidebar, command-style header, KPI strip, dense tables, and sticky inspectors.
+
+## Verification
+
+- `npx tsc --noEmit`
+- `npm.cmd run lint` (warnings only for raw `img` usage)
+- `npm.cmd run build` completed successfully when rerun outside the sandbox because the sandbox build hit a Windows `spawn EPERM` restriction
+
+## Notes
+
+Full structure and architecture notes are in `CODEBASE_STRUCTURE.md`.
