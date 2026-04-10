@@ -155,8 +155,6 @@ export default function CasesManagementPage() {
     });
   }, [filter, items, search]);
 
-  console.log(form);
-
   const saveCase = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 

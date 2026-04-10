@@ -29,11 +29,11 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
   {
     label: "Catalog",
     items: [
-      {
-        href: "/admin/cases",
-        label: "Quản lý Cases",
-        icon: Boxes,
-      },
+      // {
+      //   href: "/admin/cases",
+      //   label: "Quản lý Cases",
+      //   icon: Boxes,
+      // },
       {
         href: "/admin/charms",
         label: "Quản lý Charms",
@@ -55,7 +55,7 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
 
 const PAGE_META: Record<string, { title: string }> = {
   "/admin": { title: "Dashboard" },
-  "/admin/cases": { title: "Quản lý Cases" },
+  // "/admin/cases": { title: "Quản lý Cases" },
   "/admin/charms": { title: "Quản lý Charms" },
   "/admin/orders": { title: "Quản lý Đơn hàng" },
 };

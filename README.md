@@ -1,69 +1,74 @@
-﻿# Kinef Custom Phone Cases
+# Kinef Custom Phone Cases
 
-Next.js storefront and order system for custom phone cases, now paired with a routed admin workspace inspired by the Flux Dashboard layout style.
+Next.js 16 storefront + order system for custom handmade phone cases, with a separate admin workspace.
 
-## Current feature set
+## Public storefront (Figma-migrated)
 
-- Public storefront and custom builder
-- MongoDB persistence for catalog items and orders
-- SePay payment option generation (50 percent deposit or 100 percent full payment)
-- Cloudinary uploads for reference images, case media, and charm media
-- Flux-style admin workspace with:
-  - `/admin` overview dashboard
-  - `/admin/cases` case management
-  - `/admin/charms` charm management
-  - `/admin/orders` order management and Excel export
+Public pages are route-based under `src/app/(storefront)`:
+
+- `/` home
+- `/our-story`
+- `/custom-case` (step 1: base case)
+- `/custom-case/charms` (step 2: charms)
+- `/custom-case/order` (step 3: order info)
+- `/custom-case/confirmation/[orderCode]` (payment options)
+- `/contact`, `/shipping`, `/returns` (SEO-safe info pages)
+
+Storefront stack:
+
+- MUI Material components for interactive UI controls
+- Tailwind utilities for layout and responsive structure
+- Shared storefront flow state via route-group provider
+
+## Admin workspace
+
+Admin routes and components are isolated and unchanged:
+
+- `/admin`
+- `/admin/cases`
+- `/admin/charms`
+- `/admin/orders`
+
+## APIs and models
+
+Existing APIs/models are unchanged:
+
+- `src/app/api/*`
+- `src/models/*`
+
+Main public APIs:
+
+- `GET /api/cases`
+- `GET /api/charms`
+- `POST /api/orders`
+- `GET /api/orders/[orderCode]/payment-options`
+- `POST /api/upload`
+
+## SEO
+
+- Root metadata with `metadataBase` from `NEXT_PUBLIC_SITE_URL` fallback logic
+- Route-level metadata for key public pages
+- `src/app/robots.ts`
+- `src/app/sitemap.ts`
 
 ## Setup
 
 1. Copy `.env.example` to `.env.local`
 2. Fill MongoDB, Cloudinary, `ADMIN_API_KEY`, and SePay credentials
 3. Install dependencies
-4. Start the dev server
+4. Run:
 
-## Scripts
+- `npm run dev`
+- `npm run lint`
+- `npm run build`
 
-- `npm run dev` - start local development
-- `npm run build` - production build
-- `npm run start` - run production build
-- `npm run lint` - lint checks
+## Important constraints
 
-## Main routes
-
-- `/` - storefront, case builder, order creation, payment options
-- `/admin` - operations dashboard overview
-- `/admin/cases` - case management workspace
-- `/admin/charms` - charm management workspace
-- `/admin/orders` - order management workspace
-
-## Main APIs
-
-- `GET /api/cases` - storefront case catalog
-- `GET /api/charms` - storefront charm catalog
-- `POST /api/orders` - create order
-- `GET /api/orders/[orderCode]/payment-options` - SePay payment options
-- `POST /api/upload` - Cloudinary upload
-- `GET|POST /api/admin/cases`
-- `PUT|DELETE /api/admin/cases/[id]`
-- `GET|POST /api/admin/charms`
-- `PUT|DELETE /api/admin/charms/[id]`
-- `GET /api/admin/orders`
-- `PUT /api/admin/orders/[id]`
-- `GET /api/admin/orders/export`
-
-## Admin remake notes
-
-- The old single-file tabbed admin page was replaced with a nested App Router admin layout.
-- Shared client-side admin state now lives in `src/components/admin/admin-context.tsx`.
-- The UI keeps the existing CRUD, order status updates, payment edits, local key storage, uploads, and export flow.
-- The visual direction follows the Flux Dashboard pattern: persistent sidebar, command-style header, KPI strip, dense tables, and sticky inspectors.
-
-## Verification
-
-- `npx tsc --noEmit`
-- `npm.cmd run lint` (warnings only for raw `img` usage)
-- `npm.cmd run build` completed successfully when rerun outside the sandbox because the sandbox build hit a Windows `spawn EPERM` restriction
+- Do not edit `src/app/admin/*` unless explicitly requested.
+- Do not edit `src/app/api/*` or `src/models/*` for storefront-only UI work unless explicitly requested.
+- Keep backend contracts stable for order + payment flows.
 
 ## Notes
 
-Full structure and architecture notes are in `CODEBASE_STRUCTURE.md`.
+Detailed architecture notes live in `CODEBASE_STRUCTURE.md`.
+

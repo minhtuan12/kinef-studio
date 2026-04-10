@@ -47,7 +47,7 @@ const orderSchema = new Schema(
       trim: true,
     },
     caseItem: {
-      type: caseSnapshotSchema,
+      type: String,
       required: true,
     },
     charms: {
@@ -62,9 +62,9 @@ const orderSchema = new Schema(
       instagram: { type: String, required: true, trim: true },
       phoneNumber: { type: String, required: true, trim: true },
       phoneModel: { type: String, required: true, trim: true },
+      address: { type: String, trim: true },
     },
     notes: { type: String, default: "", trim: true },
-    referenceImageUrl: { type: String, default: null },
     payment: {
       status: {
         type: String,

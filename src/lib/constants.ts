@@ -1,4 +1,9 @@
-﻿export type CatalogSource = "default" | "db";
+﻿import blackCase from '@/assets/images/black-case.png';
+import whiteCase from '@/assets/images/white-case.png';
+import clearCase from '@/assets/images/clear-case.png';
+import { StaticImageData } from 'next/image';
+
+export type CatalogSource = "default" | "db";
 
 export type CaseProduct = {
   id: string;
@@ -6,7 +11,7 @@ export type CaseProduct = {
   description: string;
   price: number;
   discountPercent: number;
-  imageUrl: string | null;
+  imageUrl: StaticImageData;
   colorHex: string;
   swatchClassName?: string;
   isActive: boolean;
@@ -32,9 +37,9 @@ export const DEFAULT_CASES: CaseProduct[] = [
     id: "case-white",
     name: "White",
     description: "Cream opaque, soft finish",
-    price: 65000,
+    price: 120000,
     discountPercent: 0,
-    imageUrl: null,
+    imageUrl: whiteCase,
     colorHex: "#f7f4f0",
     swatchClassName: "sw-white",
     isActive: true,
@@ -44,9 +49,9 @@ export const DEFAULT_CASES: CaseProduct[] = [
     id: "case-black",
     name: "Black",
     description: "Deep matte, dramatic",
-    price: 65000,
+    price: 120000,
     discountPercent: 0,
-    imageUrl: null,
+    imageUrl: blackCase,
     colorHex: "#161412",
     swatchClassName: "sw-black",
     isActive: true,
@@ -56,9 +61,9 @@ export const DEFAULT_CASES: CaseProduct[] = [
     id: "case-clear",
     name: "Clear",
     description: "Original case shows through",
-    price: 65000,
+    price: 120000,
     discountPercent: 0,
-    imageUrl: null,
+    imageUrl: clearCase,
     colorHex: "transparent",
     swatchClassName: "sw-clear",
     isActive: true,
@@ -214,3 +219,5 @@ export function calculateDiscountedPrice(price: number, discountPercent: number)
   const safeDiscount = normalizeDiscountPercent(discountPercent);
   return Math.round(safePrice * (100 - safeDiscount) / 100);
 }
+
+export const CASE_PRICE = 120000;

@@ -116,7 +116,7 @@ export default function AdminOverviewPage() {
     const counts = new Map<string, { name: string; count: number }>();
 
     for (const order of orders) {
-      const name = order.caseItem?.name;
+      const name = order.caseItem;
       if (!name) {
         continue;
       }

@@ -12,6 +12,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.9",
+    "@mui/styles": "^6.5.0",
     "antd": "^6.3.5",
     "cloudinary": "^2.9.0",
     "lucide-react": "^1.7.0",

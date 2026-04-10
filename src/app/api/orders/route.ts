@@ -1,11 +1,11 @@
 ﻿import {
+  CASE_PRICE,
   MAX_CHARMS_PER_ORDER,
   type CharmProduct,
 } from "@/lib/constants";
 import {
   getFinalCasePrice,
   getFinalCharmPrice,
-  resolveCaseById,
   resolveCharmsByIds,
 } from "@/lib/catalog";
 import { connectToDatabase } from "@/lib/db";
@@ -52,10 +52,10 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    const selectedCase = await resolveCaseById(parsed.data.caseId);
-    if (!selectedCase || !selectedCase.isActive) {
-      return NextResponse.json({ message: "Invalid case option." }, { status: 400 });
-    }
+    const selectedCase = parsed.data.caseId;
+    // if (!selectedCase || !selectedCase.isActive) {
+    //   return NextResponse.json({ message: "Invalid case option." }, { status: 400 });
+    // }
 
     const selectedCharms = await resolveCharmsByIds(parsed.data.charmIds);
     const missingCharmIds = findMissingCharmIds(parsed.data.charmIds, selectedCharms);
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const caseTotal = getFinalCasePrice(selectedCase);
+    const caseTotal = CASE_PRICE;
     const charmTotal = selectedCharms.reduce(
       (sum, charm) => sum + getFinalCharmPrice(charm),
       0,
@@ -92,14 +92,7 @@ export async function POST(request: Request) {
 
     await Order.create({
       orderCode,
-      caseItem: {
-        id: selectedCase.id,
-        name: selectedCase.name,
-        price: selectedCase.price,
-        discountPercent: selectedCase.discountPercent,
-        finalPrice: caseTotal,
-        imageUrl: selectedCase.imageUrl,
-      },
+      caseItem: selectedCase,
       charms: selectedCharms.map((charm) => ({
         id: charm.id,
         name: charm.name,
@@ -114,7 +107,6 @@ export async function POST(request: Request) {
       total,
       customer: parsed.data.customer,
       notes: parsed.data.notes,
-      referenceImageUrl: parsed.data.referenceImageUrl,
       payment: {
         status: "unpaid",
         paidAmount: 0,

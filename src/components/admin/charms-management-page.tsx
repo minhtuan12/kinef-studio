@@ -42,6 +42,84 @@ function toCharmForm(item: AdminCharm): CharmForm {
     };
 }
 
+function CharmItem({
+    item,
+    toggleCharmStatus,
+    openUpdateEditor,
+    removeCharm,
+}: {
+    item: AdminCharm;
+    toggleCharmStatus: (item: AdminCharm, checked: boolean) => void;
+    openUpdateEditor: (item: AdminCharm) => void;
+    removeCharm: (id: string) => void;
+}) {
+    return (
+        <Card
+            key={item.id}
+            className={`${styles.managementCard} ${styles.charmSpotlightCard}`}
+        >
+            <div className={styles.charmSpotlightMedia}>
+                {item.imageUrl ? (
+                    <img
+                        src={item.imageUrl}
+                        alt={item.name || "Charm preview"}
+                        className={styles.charmSpotlightImage}
+                    />
+                ) : (
+                    <div className={styles.charmSpotlightFallback}>
+                        <ImageIcon size={28} />
+                    </div>
+                )}
+                <div className={styles.charmSpotlightOverlay} />
+            </div>
+
+            <div className={styles.charmSpotlightAside}>
+                <div className={styles.charmSpotlightMeta}>
+                    <div className={styles.charmSpotlightName}>{item.name}</div>
+                    <div className={styles.charmSpotlightPrice}>
+                        {money(item.price)}
+                    </div>
+                </div>
+
+                <div className={styles.charmSpotlightControls}>
+                    <div className={styles.cardSwitchInline}>
+                        <span>Storefront</span>
+                        <Switch
+                            checked={Boolean(item.isActive)}
+                            onChange={(_event, checked) => {
+                                void toggleCharmStatus(item, checked);
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className={styles.rowActions}>
+                    <button
+                        type="button"
+                        className={styles.tableAction}
+                        style={{
+                            background: "rgba(21, 31, 56, 0.92)",
+                            color: "white",
+                        }}
+                        onClick={() => openUpdateEditor(item)}
+                    >
+                        <Pencil size={14} />
+                        <span>Cập nhật</span>
+                    </button>
+                    <button
+                        type="button"
+                        className={styles.tableActionDanger}
+                        onClick={() => void removeCharm(item.id)}
+                    >
+                        <Trash2 size={14} />
+                        <span>Xóa</span>
+                    </button>
+                </div>
+            </div>
+        </Card>
+    );
+}
+
 export default function CharmsManagementPage() {
     const { hasAdminKey, notify, req, upload, messageApi } = useAdminContext();
     const [items, setItems] = useState<AdminCharm[]>([]);
@@ -313,131 +391,13 @@ export default function CharmsManagementPage() {
                         ) : visibleItems.length ? (
                             <div className={styles.managementCardGrid}>
                                 {visibleItems.map((item) => (
-                                    <Card
+                                    <CharmItem
                                         key={item.id}
-                                        className={`${styles.managementCard} ${styles.charmSpotlightCard}`}
-                                    >
-                                        <div
-                                            className={
-                                                styles.charmSpotlightMedia
-                                            }
-                                        >
-                                            {item.imageUrl ? (
-                                                <img
-                                                    src={item.imageUrl}
-                                                    alt={
-                                                        item.name ||
-                                                        "Charm preview"
-                                                    }
-                                                    className={
-                                                        styles.charmSpotlightImage
-                                                    }
-                                                />
-                                            ) : (
-                                                <div
-                                                    className={
-                                                        styles.charmSpotlightFallback
-                                                    }
-                                                >
-                                                    <ImageIcon size={28} />
-                                                </div>
-                                            )}
-                                            <div
-                                                className={
-                                                    styles.charmSpotlightOverlay
-                                                }
-                                            />
-                                        </div>
-
-                                        <div
-                                            className={
-                                                styles.charmSpotlightAside
-                                            }
-                                        >
-                                            <div
-                                                className={
-                                                    styles.charmSpotlightMeta
-                                                }
-                                            >
-                                                <div
-                                                    className={
-                                                        styles.charmSpotlightName
-                                                    }
-                                                >
-                                                    {item.name}
-                                                </div>
-                                                <div
-                                                    className={
-                                                        styles.charmSpotlightPrice
-                                                    }
-                                                >
-                                                    {money(item.price)}
-                                                </div>
-                                            </div>
-
-                                            <div
-                                                className={
-                                                    styles.charmSpotlightControls
-                                                }
-                                            >
-                                                <div
-                                                    className={
-                                                        styles.cardSwitchInline
-                                                    }
-                                                >
-                                                    <span>Storefront</span>
-                                                    <Switch
-                                                        checked={Boolean(
-                                                            item.isActive,
-                                                        )}
-                                                        onChange={(
-                                                            _event,
-                                                            checked,
-                                                        ) => {
-                                                            void toggleCharmStatus(
-                                                                item,
-                                                                checked,
-                                                            );
-                                                        }}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className={styles.rowActions}>
-                                                <button
-                                                    type="button"
-                                                    className={
-                                                        styles.tableAction
-                                                    }
-                                                    style={{
-                                                        background:
-                                                            "rgba(21, 31, 56, 0.92)",
-                                                        color: "white",
-                                                    }}
-                                                    onClick={() =>
-                                                        openUpdateEditor(item)
-                                                    }
-                                                >
-                                                    <Pencil size={14} />
-                                                    <span>Cập nhật</span>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className={
-                                                        styles.tableActionDanger
-                                                    }
-                                                    onClick={() =>
-                                                        void removeCharm(
-                                                            item.id,
-                                                        )
-                                                    }
-                                                >
-                                                    <Trash2 size={14} />
-                                                    <span>Xóa</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </Card>
+                                        item={item}
+                                        openUpdateEditor={openUpdateEditor}
+                                        removeCharm={removeCharm}
+                                        toggleCharmStatus={toggleCharmStatus}
+                                    />
                                 ))}
                             </div>
                         ) : (
@@ -588,9 +548,7 @@ export default function CharmsManagementPage() {
                                 disabled={saving || !hasAdminKey}
                             >
                                 <Save size={15} />
-                                <span>
-                                    Lưu
-                                </span>
+                                <span>Lưu</span>
                             </button>
                             <button
                                 type="button"

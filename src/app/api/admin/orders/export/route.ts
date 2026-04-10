@@ -1,4 +1,5 @@
 import { ensureAdminAuthorized } from "@/lib/admin-auth";
+import { CASE_PRICE } from "@/lib/constants";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/models/Order";
 import { NextResponse } from "next/server";
@@ -20,8 +21,8 @@ export async function GET(request: Request) {
       Instagram: order.customer?.instagram ?? "",
       PhoneNumber: order.customer?.phoneNumber ?? "",
       PhoneModel: order.customer?.phoneModel ?? "",
-      CaseName: order.caseItem?.name ?? "",
-      CasePrice: order.caseItem?.finalPrice ?? 0,
+      CaseName: order.caseItem ?? "",
+      CasePrice: CASE_PRICE,
       CharmCount: order.charms?.length ?? 0,
       CharmTotal: order.charmTotal,
       Total: order.total,

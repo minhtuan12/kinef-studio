@@ -272,7 +272,7 @@ export default function OrdersManagementPage() {
                     >
                       <td>
                         <div className={styles.tablePrimary}>{order.orderCode}</div>
-                        <div className={styles.tableSecondary}>{order.caseItem?.name ?? "Case snapshot missing"}</div>
+                        <div className={styles.tableSecondary}>{order.caseItem ?? "Case snapshot missing"}</div>
                       </td>
                       <td>
                         <div className={styles.tablePrimary}>{order.customer.name}</div>
@@ -342,7 +342,7 @@ export default function OrdersManagementPage() {
                 <div className={styles.summaryList}>
                   <div className={styles.summaryRow}>
                     <span>Case</span>
-                    <strong>{selectedOrder.caseItem?.name ?? "Unknown"}</strong>
+                    <strong>{selectedOrder.caseItem ?? "Unknown"}</strong>
                   </div>
                   <div className={styles.summaryRow}>
                     <span>Case total</span>

@@ -64,7 +64,7 @@ export type AdminOrder = {
     phoneNumber: string;
     phoneModel: string;
   };
-  caseItem?: OrderSnapshotCase;
+  caseItem?: string;
   charms: OrderSnapshotCharm[];
   total: number;
   charmTotal: number;

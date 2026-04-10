@@ -16,9 +16,9 @@ export const createOrderSchema = z.object({
     instagram: z.string().min(1).max(80),
     phoneNumber: z.string().min(1).max(30),
     phoneModel: z.string().min(1).max(120),
+    address: z.string().max(500).optional().default(""),
   }),
   notes: z.string().max(500).optional().default(""),
-  referenceImageUrl: z.string().url().optional(),
 });
 
 export const adminCaseSchema = z.object({
