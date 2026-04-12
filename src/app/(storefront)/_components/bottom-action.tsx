@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation"
 
 export function BottomAction() {
-	const { selectedCase } = useStorefront();
+	const { selectedCase, selectedCharms } = useStorefront();
 	const router = useRouter();
 	const pathname = usePathname();
 	const isSecondStep = pathname.includes('charms');
@@ -40,7 +40,7 @@ export function BottomAction() {
 		</Typography>
 		<Button
 			variant="outlined"
-			disabled={!selectedCase}
+			disabled={!selectedCase || selectedCharms?.length === 0}
 			sx={{
 				borderColor: "#1a1816",
 				color: "#1a1816",

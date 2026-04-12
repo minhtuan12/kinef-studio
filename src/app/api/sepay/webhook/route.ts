@@ -1,4 +1,5 @@
 import { connectToDatabase } from "@/lib/db";
+import { client } from "@/lib/sepay";
 import { Order } from "@/models/Order";
 import { NextResponse } from "next/server";
 
@@ -96,7 +97,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Missing payment code." }, { status: 400 });
     }
 
-    const orderCode = payload.custom_data;
+    const sepayOrder = await client.order.all({ q: sepayPaymentCode });
+    const orderCode = sepayOrder.data?.[0]?.order_invoice_number ?? null;
 
     await connectToDatabase();
 
