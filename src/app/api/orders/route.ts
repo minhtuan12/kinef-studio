@@ -4,14 +4,16 @@
   type CharmProduct,
 } from "@/lib/constants";
 import {
-  getFinalCasePrice,
   getFinalCharmPrice,
   resolveCharmsByIds,
 } from "@/lib/catalog";
 import { connectToDatabase } from "@/lib/db";
 import { createOrderSchema } from "@/lib/validators";
+import { CharmModel } from "@/models/Charm";
 import { Order } from "@/models/Order";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
+import { SePayPgClient } from "sepay-pg-node";
 
 function createOrderCode() {
   const seed = Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -34,6 +36,52 @@ function findMissingCharmIds(requestedIds: string[], resolved: CharmProduct[]) {
   const resolvedSet = new Set(resolved.map((item) => item.id));
   return requestedIds.filter((id) => !resolvedSet.has(id));
 }
+
+function resolveStorefrontBaseUrl(request: Request) {
+  const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.WEB_URL;
+  if (configuredUrl && configuredUrl.trim().length > 0) {
+    return configuredUrl.replace(/\/+$/, "");
+  }
+
+  return new URL(request.url).origin;
+}
+
+async function decrementCharmStocks(charmIds: string[]) {
+  const updatedIds: string[] = [];
+
+  for (const charmId of charmIds) {
+    const updatedCharm = await CharmModel.findOneAndUpdate(
+      {
+        _id: charmId,
+        isActive: true,
+        stock: { $gt: 0 },
+      },
+      { $inc: { stock: -1 } },
+      { new: true },
+    ).lean();
+
+    if (!updatedCharm) {
+      if (updatedIds.length > 0) {
+        await CharmModel.updateMany(
+          { _id: { $in: updatedIds } },
+          { $inc: { stock: 1 } },
+        );
+      }
+
+      return false;
+    }
+
+    updatedIds.push(charmId);
+  }
+
+  return true;
+}
+
+const client = new SePayPgClient({
+  env: 'sandbox',
+  merchant_id: process.env.SEPAY_MERCHANT_ID!,
+  secret_key: process.env.SEPAY_SECRET_KEY!,
+});
 
 export async function POST(request: Request) {
   try {
@@ -89,38 +137,82 @@ export async function POST(request: Request) {
     const total = caseTotal + charmTotal;
 
     const orderCode = await buildUniqueOrderCode();
+    const storefrontBaseUrl = resolveStorefrontBaseUrl(request);
+    const confirmationUrl = `${storefrontBaseUrl}/confirmation/${orderCode}`;
+    let decrementedDbCharmIds: string[] = [];
 
-    await Order.create({
-      orderCode,
-      caseItem: selectedCase,
-      charms: selectedCharms.map((charm) => ({
-        id: charm.id,
-        name: charm.name,
-        icon: charm.icon,
-        price: charm.price,
-        discountPercent: charm.discountPercent,
-        finalPrice: getFinalCharmPrice(charm),
-        imageUrl: charm.imageUrl,
-      })),
-      caseTotal,
-      charmTotal,
-      total,
-      customer: parsed.data.customer,
-      notes: parsed.data.notes,
-      payment: {
-        status: "unpaid",
-        paidAmount: 0,
-        options: {
-          deposit: null,
-          full: null,
+    const dbCharmIds = selectedCharms
+      .filter((item) => item.source === "db" && mongoose.Types.ObjectId.isValid(item.id))
+      .map((item) => item.id);
+
+    if (dbCharmIds.length > 0) {
+      const stocksUpdated = await decrementCharmStocks(dbCharmIds);
+      if (!stocksUpdated) {
+        return NextResponse.json(
+          { message: "One or more selected charms are out of stock." },
+          { status: 409 },
+        );
+      }
+
+      decrementedDbCharmIds = dbCharmIds;
+    }
+
+    try {
+      await Order.create({
+        orderCode,
+        caseItem: selectedCase,
+        charms: selectedCharms.map((charm) => ({
+          id: charm.id,
+          name: charm.name,
+          icon: charm.icon,
+          price: charm.price,
+          discountPercent: charm.discountPercent,
+          finalPrice: getFinalCharmPrice(charm),
+          imageUrl: charm.imageUrl,
+        })),
+        caseTotal,
+        charmTotal,
+        total,
+        customer: parsed.data.customer,
+        notes: parsed.data.notes,
+        payment: {
+          status: "unpaid",
+          paidAmount: 0,
+          options: {
+            deposit: null,
+            full: null,
+          },
         },
-      },
-      status: "pending",
+        status: "pending",
+      });
+    } catch (error) {
+      if (decrementedDbCharmIds.length > 0) {
+        await CharmModel.updateMany(
+          { _id: { $in: decrementedDbCharmIds } },
+          { $inc: { stock: 1 } },
+        );
+      }
+
+      throw error;
+    }
+
+    const checkoutURL = client.checkout.initCheckoutUrl();
+    const checkoutFormfields = client.checkout.initOneTimePaymentFields({
+      operation: "PURCHASE",
+      payment_method: 'BANK_TRANSFER',
+      order_invoice_number: orderCode,
+      order_amount: total / 2,
+      currency: 'VND',
+      order_description: `Cọc đơn hàng ${orderCode}`,
+      success_url: confirmationUrl,
+      error_url: confirmationUrl,
+      cancel_url: confirmationUrl,
     });
 
     return NextResponse.json({
       orderCode,
-      total,
+      checkoutUrl: checkoutURL,
+      checkoutFormFields: checkoutFormfields,
       message: "Order submitted successfully.",
     });
   } catch (error) {

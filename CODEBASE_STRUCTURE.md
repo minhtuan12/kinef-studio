@@ -28,7 +28,7 @@ This repository contains:
 - `custom-case/page.tsx`
 - `custom-case/charms/page.tsx`
 - `custom-case/order/page.tsx`
-- `custom-case/confirmation/[orderCode]/page.tsx`
+- `confirmation/[orderCode]/page.tsx`
 - `contact/page.tsx`
 - `shipping/page.tsx`
 - `returns/page.tsx`

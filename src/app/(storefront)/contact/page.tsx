@@ -1,28 +1,95 @@
 import type { Metadata } from "next";
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contact Kinef Studio for custom case support, order updates, and collaborations.",
+  description:
+    "Contact Kinef Studio for custom case support, order updates, and collaborations.",
   alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {
   return (
-    <main className="mx-auto w-full max-w-[1280px] border-x border-black/10 px-8 py-16 md:px-12">
-      <Typography component="h1" sx={{ fontFamily: "var(--font-serif)", fontSize: { xs: "56px", md: "88px" }, mb: 3 }}>
-        Contact
-      </Typography>
-      <Typography component="p" sx={{ maxWidth: "620px", color: "#5f5a57", mb: 4, lineHeight: 1.9 }}>
-        For order support and custom requests, message us directly on Instagram. Include your order
-        code for faster updates.
-      </Typography>
-      <a href="https://instagram.com/kinef.studio" target="_blank" rel="noreferrer">
-        <Button variant="contained" sx={{ bgcolor: "#1a1816", borderRadius: 0, px: 3, py: 1.2 }}>
-          DM @kinef.studio
-        </Button>
-      </a>
+    <main className="mx-auto w-full max-w-[1280px] px-8 py-18.5 md:px-12 min-h-[calc(100vh-386px)]">
+      <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+        <Box>
+          <Typography
+            component="h1"
+            sx={{
+              fontFamily: "var(--font-serif)",
+              fontSize: {
+                xs: "56px",
+                md: "150px",
+                fontWeight: 200,
+                fontStyle: "italic",
+              },
+              mb: 3,
+            }}
+          >
+            Get in
+          </Typography>
+          <Typography
+            component="h1"
+            sx={{
+              fontFamily: "var(--font-serif)",
+              fontSize: {
+                xs: "56px",
+                md: "150px",
+                fontWeight: 200,
+                fontStyle: "italic",
+              },
+              mb: 3,
+              mt: -15,
+              ml: 22,
+            }}
+          >
+            touch
+          </Typography>
+        </Box>
+        <Box mt={8}>
+          <Typography
+            component="p"
+            sx={{
+              color: "#000000",
+              mb: 4,
+              fontSize: 24,
+            }}
+          >
+            Find me if you have any questions or concerns.
+          </Typography>
+          <Typography
+            component="p"
+            sx={{
+              color: "#818080",
+              mb: 4,
+              fontSize: 24,
+            }}
+          >
+            Instagram: <Link className="!underline" href={'https://instagram.com/kinef.studio'}>Kinef.studio</Link>
+          </Typography>
+          <Typography
+            component="p"
+            sx={{
+              color: "#818080",
+              mb: 4,
+              fontSize: 24,
+            }}
+          >
+            Phone number: <Link className="!underline" href={'tel:(+84)988218053'}>(+84)988218053</Link>
+          </Typography>
+          <Typography
+            component="p"
+            sx={{
+              color: "#818080",
+              mb: 4,
+              fontSize: 24,
+            }}
+          >
+            Address: Ho Chi Minh City (online)
+          </Typography>
+        </Box>
+      </Box>
     </main>
   );
 }
-

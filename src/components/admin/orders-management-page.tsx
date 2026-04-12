@@ -5,7 +5,12 @@
 import { Download, RefreshCcw, Save } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAdminContext } from "./admin-context";
-import { AdminPageSection, AdminStat, OrderStatusBadge, PaymentStatusBadge } from "./admin-shell";
+import {
+  AdminPageSection,
+  AdminStat,
+  OrderStatusBadge,
+  PaymentStatusBadge,
+} from "./admin-shell";
 import styles from "./admin.module.css";
 import {
   ORDER_STATUSES,
@@ -16,8 +21,18 @@ import {
   orderStatusLabel,
   paymentStatusLabel,
 } from "./admin-utils";
-import type { AdminOrder, OrderDraft, OrderStatus, PaymentStatus } from "./admin-types";
+import type {
+  AdminOrder,
+  OrderDraft,
+  OrderStatus,
+  PaymentStatus,
+} from "./admin-types";
 
+const CASES = {
+  "case-clear": "Clear",
+  "case-black": "Black",
+  "case-white": "White",
+};
 
 function createDraft(order: AdminOrder): OrderDraft {
   return {
@@ -34,8 +49,12 @@ export default function OrdersManagementPage() {
   const [loading, setLoading] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
-  const [paymentFilter, setPaymentFilter] = useState<PaymentStatus | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">(
+    "all",
+  );
+  const [paymentFilter, setPaymentFilter] = useState<PaymentStatus | "all">(
+    "all",
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const loadOrders = useCallback(async () => {
@@ -45,18 +64,30 @@ export default function OrdersManagementPage() {
 
     setLoading(true);
     try {
-      const response = await req<{ orders: AdminOrder[] }>("/api/admin/orders");
+      const response = await req<{ orders: AdminOrder[] }>(
+        "/api/admin/orders",
+      );
       setOrders(response.orders);
       setDrafts(
-        response.orders.reduce<Record<string, OrderDraft>>((accumulator, order) => {
-          accumulator[order.id] = createDraft(order);
-          return accumulator;
-        }, {}),
+        response.orders.reduce<Record<string, OrderDraft>>(
+          (accumulator, order) => {
+            accumulator[order.id] = createDraft(order);
+            return accumulator;
+          },
+          {},
+        ),
       );
-      setSelectedId((current) => current ?? response.orders[0]?.id ?? null);
+      setSelectedId(
+        (current) => current ?? response.orders[0]?.id ?? null,
+      );
       notify("success", `Loaded ${response.orders.length} orders.`);
     } catch (error) {
-      notify("error", error instanceof Error ? error.message : "Failed to load orders.");
+      notify(
+        "error",
+        error instanceof Error
+          ? error.message
+          : "Failed to load orders.",
+      );
     } finally {
       setLoading(false);
     }
@@ -80,8 +111,11 @@ export default function OrdersManagementPage() {
         .join(" ")
         .toLowerCase();
       const matchesSearch = haystack.includes(normalizedSearch);
-      const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-      const matchesPayment = paymentFilter === "all" || (order.payment?.status ?? "unpaid") === paymentFilter;
+      const matchesStatus =
+        statusFilter === "all" || order.status === statusFilter;
+      const matchesPayment =
+        paymentFilter === "all" ||
+        (order.payment?.status ?? "unpaid") === paymentFilter;
 
       return matchesSearch && matchesStatus && matchesPayment;
     });
@@ -98,19 +132,30 @@ export default function OrdersManagementPage() {
     }
   }, [filteredOrders, selectedId]);
 
-  const selectedOrder = filteredOrders.find((order) => order.id === selectedId) ?? null;
-  const selectedDraft = selectedOrder ? drafts[selectedOrder.id] ?? createDraft(selectedOrder) : null;
+  const selectedOrder =
+    filteredOrders.find((order) => order.id === selectedId) ?? null;
+  const selectedDraft = selectedOrder
+    ? (drafts[selectedOrder.id] ?? createDraft(selectedOrder))
+    : null;
 
   const metrics = useMemo(() => {
-    const openOrders = orders.filter((order) => order.status === "pending" || order.status === "in_progress").length;
-    const bookedRevenue = orders.reduce((sum, order) => sum + order.total, 0);
-    const paidRevenue = orders.reduce((sum, order) => sum + (order.payment?.paidAmount ?? 0), 0);
-    const outstanding = Math.max(0, bookedRevenue - paidRevenue);
+    const openOrders = orders.filter(
+      (order) =>
+        order.status !== "completed" && order.status !== "cancelled",
+    ).length;
+    const bookedRevenue = orders.reduce(
+      (sum, order) => sum + order.total,
+      0,
+    );
+    const outstanding = orders.reduce(
+      (sum, order) => sum + (order.payment?.paidAmount ?? 0),
+      0,
+    );
 
     return {
       openOrders,
       bookedRevenue,
-      paidRevenue,
+      // paidRevenue,
       outstanding,
     };
   }, [orders]);
@@ -147,7 +192,12 @@ export default function OrdersManagementPage() {
       notify("success", "Order updated.");
       await loadOrders();
     } catch (error) {
-      notify("error", error instanceof Error ? error.message : "Failed to update order.");
+      notify(
+        "error",
+        error instanceof Error
+          ? error.message
+          : "Failed to update order.",
+      );
     } finally {
       setSavingId(null);
     }
@@ -182,7 +232,12 @@ export default function OrdersManagementPage() {
       URL.revokeObjectURL(href);
       notify("success", "Order export downloaded.");
     } catch (error) {
-      notify("error", error instanceof Error ? error.message : "Failed to export orders.");
+      notify(
+        "error",
+        error instanceof Error
+          ? error.message
+          : "Failed to export orders.",
+      );
     }
   };
 
@@ -193,11 +248,19 @@ export default function OrdersManagementPage() {
         title="Order management"
         actions={
           <div className={styles.inlineActions}>
-            <button className={styles.secondaryAction} onClick={() => void loadOrders()} disabled={!hasAdminKey || loading}>
+            <button
+              className={styles.secondaryAction}
+              onClick={() => void loadOrders()}
+              disabled={!hasAdminKey || loading}
+            >
               <RefreshCcw size={15} />
               <span>{loading ? "Refreshing" : "Refresh"}</span>
             </button>
-            <button className={styles.primaryAction} onClick={() => void exportOrders()} disabled={!hasAdminKey}>
+            <button
+              className={styles.primaryAction}
+              onClick={() => void exportOrders()}
+              disabled={!hasAdminKey}
+            >
               <Download size={15} />
               <span>Export orders</span>
             </button>
@@ -206,10 +269,19 @@ export default function OrdersManagementPage() {
       />
 
       <section className={styles.statGrid}>
-        <AdminStat label="Orders" value={String(orders.length)} hint="All orders currently stored in MongoDB" />
-        <AdminStat label="Open workflow" value={String(metrics.openOrders)} hint="Pending and in-progress orders combined" />
-        <AdminStat label="Booked revenue" value={money(metrics.bookedRevenue)} hint={`${money(metrics.paidRevenue)} already recorded as paid`} />
-        <AdminStat label="Outstanding" value={money(metrics.outstanding)} hint="Total remaining balance across all orders" />
+        <AdminStat label="Orders" value={String(orders.length)} />
+        <AdminStat
+          label="Open orders"
+          value={String(metrics.openOrders)}
+        />
+        <AdminStat
+          label="Total revenue"
+          value={money(metrics.bookedRevenue)}
+        />
+        <AdminStat
+          label="Received"
+          value={money(metrics.outstanding)}
+        />
       </section>
 
       <section className={styles.managementGridWide}>
@@ -223,26 +295,44 @@ export default function OrdersManagementPage() {
             />
             <div className={styles.filterCluster}>
               <div className={styles.filterRow}>
-                {(["all", ...ORDER_STATUSES] as Array<OrderStatus | "all">).map((value) => (
+                {(
+                  ["all", ...ORDER_STATUSES] as Array<
+                    OrderStatus | "all"
+                  >
+                ).map((value) => (
                   <button
                     key={value}
-
-                    className={cx(styles.filterChip, statusFilter === value && styles.filterChipActive)}
+                    className={cx(
+                      styles.filterChip,
+                      statusFilter === value &&
+                      styles.filterChipActive,
+                    )}
                     onClick={() => setStatusFilter(value)}
                   >
-                    {value === "all" ? "all status" : orderStatusLabel(value)}
+                    {value === "all"
+                      ? "all status"
+                      : orderStatusLabel(value)}
                   </button>
                 ))}
               </div>
               <div className={styles.filterRow}>
-                {(["all", ...PAYMENT_STATUSES] as Array<PaymentStatus | "all">).map((value) => (
+                {(
+                  ["all", ...PAYMENT_STATUSES] as Array<
+                    PaymentStatus | "all"
+                  >
+                ).map((value) => (
                   <button
                     key={value}
-
-                    className={cx(styles.filterChip, paymentFilter === value && styles.filterChipActive)}
+                    className={cx(
+                      styles.filterChip,
+                      paymentFilter === value &&
+                      styles.filterChipActive,
+                    )}
                     onClick={() => setPaymentFilter(value)}
                   >
-                    {value === "all" ? "all payment" : paymentStatusLabel(value)}
+                    {value === "all"
+                      ? "all payment"
+                      : paymentStatusLabel(value)}
                   </button>
                 ))}
               </div>
@@ -256,9 +346,9 @@ export default function OrdersManagementPage() {
                   <th>Order</th>
                   <th>Customer</th>
                   <th>Model</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Payment</th>
+                  <th className="!text-right">Total</th>
+                  <th className="!text-center">Status</th>
+                  <th className="!text-center">Payment</th>
                   <th>Created</th>
                 </tr>
               </thead>
@@ -267,31 +357,59 @@ export default function OrdersManagementPage() {
                   filteredOrders.map((order) => (
                     <tr
                       key={order.id}
-                      className={cx(styles.clickableRow, selectedId === order.id && styles.clickableRowActive)}
-                      onClick={() => setSelectedId(order.id)}
+                      className={cx(
+                        styles.clickableRow,
+                        selectedId === order.id &&
+                        styles.clickableRowActive,
+                      )}
+                      onClick={() =>
+                        setSelectedId(order.id)
+                      }
                     >
                       <td>
-                        <div className={styles.tablePrimary}>{order.orderCode}</div>
-                        <div className={styles.tableSecondary}>{order.caseItem ?? "Case snapshot missing"}</div>
+                        <div
+                          className={
+                            styles.tablePrimary
+                          }
+                        >
+                          {order.orderCode}
+                        </div>
                       </td>
                       <td>
-                        <div className={styles.tablePrimary}>{order.customer.name}</div>
-                        <div className={styles.tableSecondary}>{order.customer.instagram}</div>
+                        <div
+                          className={
+                            styles.tablePrimary
+                          }
+                        >
+                          {order.customer.name}
+                        </div>
                       </td>
                       <td>{order.customer.phoneModel}</td>
-                      <td>{money(order.total)}</td>
-                      <td>
-                        <OrderStatusBadge value={order.status} />
+                      <td className="!text-right">{money(order.total)}</td>
+                      <td className="!text-center">
+                        <OrderStatusBadge
+                          value={order.status}
+                        />
+                      </td>
+                      <td className="!text-center">
+                        <PaymentStatusBadge
+                          value={
+                            order.payment?.status ??
+                            "unpaid"
+                          }
+                        />
                       </td>
                       <td>
-                        <PaymentStatusBadge value={order.payment?.status ?? "unpaid"} />
+                        {formatDate(order.createdAt)}
                       </td>
-                      <td>{formatDate(order.createdAt)}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className={styles.emptyCell}>
+                    <td
+                      colSpan={7}
+                      className={styles.emptyCell}
+                    >
                       Empty
                     </td>
                   </tr>
@@ -306,83 +424,160 @@ export default function OrdersManagementPage() {
             <>
               <div className={styles.panelHeader}>
                 <div>
-                  <div className={styles.panelEyebrow}>Inspector</div>
-                  <h3 className={styles.panelTitle}>{selectedOrder.orderCode}</h3>
+                  <div className={styles.panelEyebrow}>
+                    Order
+                  </div>
+                  <h3 className={styles.panelTitle}>
+                    {selectedOrder.orderCode}
+                  </h3>
                 </div>
                 <div className={styles.badgeRow}>
-                  <OrderStatusBadge value={selectedOrder.status} />
-                  <PaymentStatusBadge value={selectedOrder.payment?.status ?? "unpaid"} />
+                  <OrderStatusBadge
+                    value={selectedOrder.status}
+                  />
+                  <PaymentStatusBadge
+                    value={
+                      selectedOrder.payment?.status ??
+                      "unpaid"
+                    }
+                  />
                 </div>
               </div>
 
               <div className={styles.inspectorBlock}>
-                <div className={styles.inspectorTitle}>Customer</div>
+                <div className={styles.inspectorTitle}>
+                  Customer
+                </div>
                 <div className={styles.detailGrid}>
                   <div>
                     <span>Name</span>
-                    <strong>{selectedOrder.customer.name}</strong>
+                    <strong>
+                      {selectedOrder.customer.name}
+                    </strong>
                   </div>
                   <div>
                     <span>Instagram</span>
-                    <strong>{selectedOrder.customer.instagram}</strong>
+                    <strong>
+                      {selectedOrder.customer.instagram}
+                    </strong>
                   </div>
                   <div>
                     <span>Phone</span>
-                    <strong>{selectedOrder.customer.phoneNumber}</strong>
+                    <strong>
+                      {selectedOrder.customer.phoneNumber}
+                    </strong>
                   </div>
                   <div>
                     <span>Model</span>
-                    <strong>{selectedOrder.customer.phoneModel}</strong>
+                    <strong>
+                      {selectedOrder.customer.phoneModel}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>Address</span>
+                    <strong>
+                      {selectedOrder.customer?.address ?? ''}
+                    </strong>
                   </div>
                 </div>
               </div>
 
               <div className={styles.inspectorBlock}>
-                <div className={styles.inspectorTitle}>Order composition</div>
+                <div className={styles.inspectorTitle}>
+                  Notes
+                </div>
+                <p className={styles.noteBody}>
+                  {selectedOrder.notes?.trim() ||
+                    "No customer note attached to this order."}
+                </p>
+              </div>
+
+              <div className={styles.inspectorBlock}>
+                <div className={styles.inspectorTitle}>
+                  Order composition
+                </div>
                 <div className={styles.summaryList}>
                   <div className={styles.summaryRow}>
                     <span>Case</span>
-                    <strong>{selectedOrder.caseItem ?? "Unknown"}</strong>
+                    <div className="flex items-center gap-2">
+                      <strong>
+                        {CASES[
+                          selectedOrder.caseItem as keyof typeof CASES
+                        ] ?? "Unknown"}
+                      </strong>
+                      {!Boolean(selectedOrder.caseItem?.includes('clear')) &&
+                        <div className={`w-4 h-4 rounded-[4px] border-2 border-black ${selectedOrder.caseItem === 'case-black' ? 'bg-black' : (selectedOrder.caseItem === 'case-white' ? 'bg-white' : "")}`} />
+                      }
+                    </div>
                   </div>
                   <div className={styles.summaryRow}>
-                    <span>Case total</span>
-                    <strong>{money(selectedOrder.caseTotal)}</strong>
+                    <span>Case price</span>
+                    <strong>
+                      {money(selectedOrder.caseTotal)}
+                    </strong>
                   </div>
                   <div className={styles.summaryRow}>
                     <span>Charm total</span>
-                    <strong>{money(selectedOrder.charmTotal)}</strong>
+                    <strong>
+                      {money(selectedOrder.charmTotal)}
+                    </strong>
                   </div>
                   <div className={styles.summaryRow}>
                     <span>Grand total</span>
-                    <strong>{money(selectedOrder.total)}</strong>
+                    <strong>
+                      {money(selectedOrder.total)}
+                    </strong>
                   </div>
                 </div>
 
                 <div className={styles.charmList}>
                   {selectedOrder.charms.length ? (
                     selectedOrder.charms.map((item) => (
-                      <div key={`${selectedOrder.id}-${item.id}`} className={styles.simpleRow}>
-                        <div>
-                          <div className={styles.simpleTitle}>
-                            {item.icon} {item.name}
+                      <div
+                        key={`${selectedOrder.id}-${item.id}`}
+                        className={`${styles.simpleRow} flex items-center justify-start gap-3`}
+                      >
+                        <img
+                          src={item.imageUrl ?? ""}
+                          className="w-12 h-12"
+                        />
+                        <div
+                          className={`${styles.simpleTitle}`}
+                        >
+                          {item.name}
+                          <div
+                            className={
+                              styles.simpleMeta
+                            }
+                          >
+                            {money(item.finalPrice)}{" "}
+                            final price
                           </div>
-                          <div className={styles.simpleMeta}>{money(item.finalPrice)} final price</div>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className={styles.emptyState}>No charms attached to this order.</div>
+                    <div className={styles.emptyState}>
+                      No charms attached to this order.
+                    </div>
                   )}
                 </div>
               </div>
 
               <div className={styles.inspectorBlock}>
-                <div className={styles.inspectorTitle}>Update status</div>
+                <div className={styles.inspectorTitle}>
+                  Update status
+                </div>
                 <label className={styles.field}>
                   <span>Fulfillment</span>
                   <select
                     value={selectedDraft.status}
-                    onChange={(event) => patchDraft(selectedOrder.id, { status: event.target.value as OrderStatus })}
+                    onChange={(event) =>
+                      patchDraft(selectedOrder.id, {
+                        status: event.target
+                          .value as OrderStatus,
+                      })
+                    }
                   >
                     {ORDER_STATUSES.map((status) => (
                       <option key={status} value={status}>
@@ -394,56 +589,43 @@ export default function OrdersManagementPage() {
 
                 <label className={styles.field}>
                   <span>Payment</span>
-                  <select
-                    value={selectedDraft.paymentStatus}
-                    onChange={(event) => patchDraft(selectedOrder.id, { paymentStatus: event.target.value as PaymentStatus })}
-                  >
-                    {PAYMENT_STATUSES.map((status) => (
-                      <option key={status} value={status}>
-                        {paymentStatusLabel(status)}
-                      </option>
-                    ))}
-                  </select>
+                  {paymentStatusLabel(
+                    selectedDraft.paymentStatus,
+                  )}
                 </label>
 
                 <label className={styles.field}>
                   <span>Paid amount</span>
-                  <input
-                    type="number"
-                    min={0}
-                    value={selectedDraft.paidAmount}
-                    onChange={(event) => patchDraft(selectedOrder.id, { paidAmount: Number(event.target.value) })}
-                  />
+                  {selectedDraft.paidAmount}
                 </label>
 
                 <button
-
                   className={styles.primaryAction}
-                  onClick={() => void saveOrder(selectedOrder.id)}
-                  disabled={savingId === selectedOrder.id || !hasAdminKey}
+                  onClick={() =>
+                    void saveOrder(selectedOrder.id)
+                  }
+                  disabled={
+                    savingId === selectedOrder.id ||
+                    !hasAdminKey
+                  }
                 >
                   <Save size={15} />
-                  <span>{savingId === selectedOrder.id ? "Saving" : "Save order"}</span>
+                  <span>
+                    {savingId === selectedOrder.id
+                      ? "Saving"
+                      : "Save order"}
+                  </span>
                 </button>
-              </div>
-
-              <div className={styles.inspectorBlock}>
-                <div className={styles.inspectorTitle}>Notes</div>
-                <p className={styles.noteBody}>{selectedOrder.notes?.trim() || "No customer note attached to this order."}</p>
-                {selectedOrder.referenceImageUrl ? (
-                  <img src={selectedOrder.referenceImageUrl} alt={`${selectedOrder.orderCode} reference`} className={styles.referenceImage} />
-                ) : null}
               </div>
             </>
           ) : (
-            <div className={styles.emptyStateLarge}>Select an order from the table to inspect and update it.</div>
+            <div className={styles.emptyStateLarge}>
+              Select an order from the table to inspect and update
+              it.
+            </div>
           )}
         </aside>
       </section>
     </>
   );
 }
-
-
-
-

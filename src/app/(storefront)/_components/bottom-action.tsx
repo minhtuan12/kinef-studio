@@ -38,7 +38,7 @@ export function BottomAction() {
 		>
 			step {currentStep} of 3
 		</Typography>
-		{!isLastStep ? <Button
+		<Button
 			variant="outlined"
 			disabled={!selectedCase}
 			sx={{
@@ -53,21 +53,6 @@ export function BottomAction() {
 			className="flex items-center justify-center gap-2 hover:!bg-black hover:!text-white"
 		>
 			Continue <ArrowRight size={13} className="-mt-0.5" />
-		</Button> : <Button
-			variant="outlined"
-			sx={{
-				color: "#ffffff",
-				borderColor: "#000000",
-				borderRadius: 0,
-				px: 5,
-				textTransform: 'none',
-				height: 40,
-			}}
-			onClick={() => router.push(nextHref)}
-			className="flex items-center justify-center gap-2 !bg-black hover:!bg-white hover:!text-black"
-		>
-			Place order <ArrowRight size={13} className="-mt-0.5" />
 		</Button>
-		}
 	</div> : null;
 }

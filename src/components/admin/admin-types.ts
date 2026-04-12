@@ -63,6 +63,7 @@ export type AdminOrder = {
     instagram: string;
     phoneNumber: string;
     phoneModel: string;
+    address?: string;
   };
   caseItem?: string;
   charms: OrderSnapshotCharm[];

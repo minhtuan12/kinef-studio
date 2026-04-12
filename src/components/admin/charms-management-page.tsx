@@ -104,7 +104,7 @@ function CharmItem({
                         onClick={() => openUpdateEditor(item)}
                     >
                         <Pencil size={14} />
-                        <span>Cập nhật</span>
+                        <span>Update</span>
                     </button>
                     <button
                         type="button"
@@ -112,7 +112,7 @@ function CharmItem({
                         onClick={() => void removeCharm(item.id)}
                     >
                         <Trash2 size={14} />
-                        <span>Xóa</span>
+                        <span>Delete</span>
                     </button>
                 </div>
             </div>
@@ -258,7 +258,7 @@ export default function CharmsManagementPage() {
 
             setIsEditorOpen(false);
             resetForm();
-            messageApi.success("Lưu thành công");
+            messageApi.success("Successful");
             await loadCharms();
         } catch (error) {
             notify(
@@ -342,7 +342,7 @@ export default function CharmsManagementPage() {
             <>
                 <AdminPageSection
                     eyebrow="Catalog"
-                    title="Quản lý Charms"
+                    title="Charm Management"
                     actions={
                         <div className={styles.inlineActions}>
                             <button
@@ -363,7 +363,7 @@ export default function CharmsManagementPage() {
                                 disabled={!hasAdminKey}
                             >
                                 <Plus size={15} />
-                                <span>Thêm mới</span>
+                                <span>Add new</span>
                             </button>
                         </div>
                     }
@@ -380,7 +380,7 @@ export default function CharmsManagementPage() {
                                 onChange={(event) =>
                                     setSearch(event.target.value)
                                 }
-                                placeholder="Tìm charm theo tên"
+                                placeholder="Search by name"
                             />
                         </div>
 
@@ -422,7 +422,7 @@ export default function CharmsManagementPage() {
                     title={
                         <div className={styles.modalTitleWrap}>
                             <span>
-                                {editingId ? "Cập nhật charm" : "Tạo charm"}
+                                {editingId ? "Update charm" : "Create charm"}
                             </span>
                         </div>
                     }
@@ -481,16 +481,15 @@ export default function CharmsManagementPage() {
                                 />
                             </label>
                             <label className={styles.field}>
-                                <span>Discount %</span>
+                                <span>Stock</span>
                                 <input
                                     type="number"
                                     min={0}
-                                    max={100}
-                                    value={form.discountPercent}
+                                    value={form.stock}
                                     onChange={(event) =>
                                         setForm((current) => ({
                                             ...current,
-                                            discountPercent: event.target.value,
+                                            stock: event.target.value,
                                         }))
                                     }
                                     required
@@ -499,23 +498,8 @@ export default function CharmsManagementPage() {
                         </div>
 
                         <div className={styles.fieldRow}>
-                            {/* <label className={styles.field}>
-                <span>Stock</span>
-                <input
-                  type="number"
-                  min={0}
-                  value={form.stock}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      stock: event.target.value,
-                    }))
-                  }
-                  required
-                />
-              </label> */}
                             <label className={styles.switchField}>
-                                <span>Storefront status</span>
+                                <span>Show/Hide</span>
                                 <Switch
                                     checked={Boolean(form.isActive)}
                                     onChange={(_event, checked) =>
@@ -530,7 +514,7 @@ export default function CharmsManagementPage() {
                                 <span>
                                     <Upload size={14} />
                                     <strong>
-                                        {file ? file.name : "Upload ảnh"}
+                                        {file ? file.name : "Upload Image"}
                                     </strong>
                                 </span>
                                 <input
@@ -548,7 +532,7 @@ export default function CharmsManagementPage() {
                                 disabled={saving || !hasAdminKey}
                             >
                                 <Save size={15} />
-                                <span>Lưu</span>
+                                <span>Save</span>
                             </button>
                             <button
                                 type="button"

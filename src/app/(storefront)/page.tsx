@@ -22,9 +22,9 @@ export const metadata: Metadata = {
 export default function HomePage() {
 
   return (
-    <main className="mx-auto w-full max-w-[1280px]">
-      <section className="grid min-h-[calc(100vh-120px)] grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col justify-between border-b border-black/10 px-8 py-35 md:border-b-0 md:border-r md:px-36">
+    <main className="mx-auto w-full max-w-[1280px] min-h-[calc(100vh-386px)]">
+      <section className="grid min-h-[799px] max-h-[799px] grid-cols-1 md:grid-cols-2">
+        <div className="flex flex-col justify-between border-b border-black/10 px-8 py-32 md:border-b-0 md:border-r md:px-36">
           <Box display={'flex'} alignItems={'center'} gap={3} justifyContent={'space-between'} mb={3}>
             <Typography
               variant="body1"
@@ -111,7 +111,7 @@ export default function HomePage() {
             </Link>
           </Box>
         </div>
-        <div className="relative min-h-[360px] bg-[#efebe5]">
+        <div className="relative min-h-[360px]max-h-[799px] bg-[#efebe5]">
           <Image
             src={banner}
             alt="Kinef custom phone case hero"

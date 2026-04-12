@@ -11,7 +11,7 @@ Public pages are route-based under `src/app/(storefront)`:
 - `/custom-case` (step 1: base case)
 - `/custom-case/charms` (step 2: charms)
 - `/custom-case/order` (step 3: order info)
-- `/custom-case/confirmation/[orderCode]` (payment options)
+- `/confirmation/[orderCode]` (payment options)
 - `/contact`, `/shipping`, `/returns` (SEO-safe info pages)
 
 Storefront stack:

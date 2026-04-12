@@ -276,7 +276,7 @@ export default function CasesManagementPage() {
                 disabled={!hasAdminKey}
               >
                 <Plus size={15} />
-                <span>Thêm mới</span>
+                <span>Add new</span>
               </button>
             </div>
           }

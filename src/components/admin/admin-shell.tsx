@@ -36,7 +36,7 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       // },
       {
         href: "/admin/charms",
-        label: "Quản lý Charms",
+        label: "Charm Management",
         icon: Sparkles,
       },
     ],
@@ -56,8 +56,8 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
 const PAGE_META: Record<string, { title: string }> = {
   "/admin": { title: "Dashboard" },
   // "/admin/cases": { title: "Quản lý Cases" },
-  "/admin/charms": { title: "Quản lý Charms" },
-  "/admin/orders": { title: "Quản lý Đơn hàng" },
+  "/admin/charms": { title: "Charm Management" },
+  "/admin/orders": { title: "Order Management" },
 };
 
 function AdminLoginModal() {
@@ -81,24 +81,24 @@ function AdminLoginModal() {
     <div className={styles.authOverlay}>
       <div className={styles.authModal}>
         <div className={styles.authEyebrow} style={{ textAlign: 'center' }}>Admin</div>
-        <h1 className={styles.authTitle} style={{ textAlign: 'center' }}>Đăng nhập vào Kinef Admin</h1>
+        <h1 className={styles.authTitle} style={{ textAlign: 'center' }}>Login Kinef Admin</h1>
 
         <form className={styles.authForm} onSubmit={handleSubmit}>
           <label className={styles.authField}>
-            <span>MẬT KHẨU</span>
+            <span>PASSWORD</span>
             <input
               type="password"
               value={candidateKey}
               onChange={(event) => setCandidateKey(event.target.value)}
-              placeholder="Nhập mật khẩu"
+              placeholder="Enter password"
               autoFocus
             />
           </label>
 
-          {error ? <div className={styles.authError}>Sai mật khẩu</div> : null}
+          {error ? <div className={styles.authError}>Incorrect password</div> : null}
 
           <button type="submit" className={styles.primaryAction} disabled={isAuthenticating}>
-            <span>{isAuthenticating ? <Loader2 className="animate-spin" /> : "Đăng nhập"}</span>
+            <span>{isAuthenticating ? <Loader2 className="animate-spin" /> : "Login"}</span>
           </button>
         </form>
       </div>
@@ -137,7 +137,6 @@ function AdminShellInner({ children }: { children: ReactNode }) {
         <nav className={styles.sidebarNav}>
           {NAV_GROUPS.map((group) => (
             <div key={group.label} className={styles.navGroup}>
-              <div className={styles.navGroupLabel}>{group.label}</div>
               {group.items.map((item) => {
                 const Icon = item.icon;
                 const isActive =
@@ -231,17 +230,14 @@ export function AdminPageSection({
 export function AdminStat({
   label,
   value,
-  hint,
 }: {
   label: string;
   value: string;
-  hint: string;
 }) {
   return (
     <article className={styles.statCard}>
       <div className={styles.statLabel}>{label}</div>
       <div className={styles.statValue}>{value}</div>
-      <div className={styles.statHint}>{hint}</div>
     </article>
   );
 }

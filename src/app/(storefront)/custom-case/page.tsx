@@ -1,12 +1,9 @@
 "use client";
 
-import { Alert, Box, Button, Card, CardContent, Typography } from "@mui/material";
+import { Alert, Box, Card, CardContent, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { BuilderStepper } from "../_components/stepper";
 import { useStorefront } from "../_context/storefront-context";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN");
 

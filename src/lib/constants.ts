@@ -221,3 +221,8 @@ export function calculateDiscountedPrice(price: number, discountPercent: number)
 }
 
 export const CASE_PRICE = 120000;
+
+const currencyFormatter = new Intl.NumberFormat("vi-VN");
+export function formatVnd(amount: number) {
+  return `${currencyFormatter.format(amount)} đ`;
+}

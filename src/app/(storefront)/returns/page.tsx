@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ReturnsPage() {
   return (
-    <main className="mx-auto w-full max-w-[1280px] border-x border-black/10 px-8 py-16 md:px-12">
+    <main className="mx-auto w-full max-w-[1280px] border-x border-black/10 px-8 py-16 md:px-12 min-h-[calc(100vh-386px)]">
       <Typography component="h1" sx={{ fontFamily: "var(--font-serif)", fontSize: { xs: "56px", md: "88px" }, mb: 3 }}>
         Returns
       </Typography>

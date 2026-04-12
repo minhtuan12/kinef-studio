@@ -101,6 +101,30 @@ export default function OrderPage() {
     });
   }, [formValues, orderForm, setOrderFormField]);
 
+  const redirectToSepay = useCallback(
+    (
+      checkoutUrl: string,
+      checkoutFormFields: Record<string, string | number>,
+    ) => {
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = checkoutUrl;
+      form.style.display = "none";
+
+      Object.entries(checkoutFormFields).forEach(([name, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = String(value);
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+    },
+    [],
+  );
+
   const submitOrder = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selectedCase || selectedCharms.length === 0) {
@@ -142,6 +166,8 @@ export default function OrderPage() {
       const orderData = (await orderResponse.json()) as {
         message?: string;
         orderCode?: string;
+        checkoutUrl?: string;
+        checkoutFormFields?: Record<string, string | number>;
       };
 
       if (!orderResponse.ok || !orderData.orderCode) {
@@ -150,7 +176,12 @@ export default function OrderPage() {
 
       incrementCartCount();
       const orderCode = orderData.orderCode;
-      router.push(`/custom-case/confirmation/${orderCode}`);
+      if (orderData.checkoutUrl && orderData.checkoutFormFields) {
+        redirectToSepay(orderData.checkoutUrl, orderData.checkoutFormFields);
+        return;
+      }
+
+      router.push(`/confirmation/${orderCode}`);
     } catch (error) {
       setSubmitError(
         error instanceof Error

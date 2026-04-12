@@ -50,14 +50,10 @@ export async function PUT(
 
     if (parsed.data.status) {
       order.status = parsed.data.status;
-    }
-
-    if (parsed.data.paymentStatus) {
-      order.set("payment.status", parsed.data.paymentStatus);
-    }
-
-    if (typeof parsed.data.paidAmount === "number") {
-      order.set("payment.paidAmount", parsed.data.paidAmount);
+      if (parsed.data.status === 'completed') {
+        order.payment.paidAmount = order.total;
+        order.payment.status = 'paid';
+      }
     }
 
     await order.save();

@@ -1,12 +1,11 @@
 "use client";
 
-import { Button, Typography } from "@mui/material";
+import { Button, Divider, Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useStorefront } from "../_context/storefront-context";
 import Image from "next/image";
 import logo from "@/assets/images/logo.svg";
-import FullWidthDivider from "./full-divider";
 
 function NavLink({ href, label }: { href: string; label: string }) {
   const pathname = usePathname();
@@ -19,11 +18,12 @@ function NavLink({ href, label }: { href: string; label: string }) {
       <Button
         variant="text"
         sx={{
-          color: active ? "#1a1816" : "#838383",
+          color: active ? "#000000" : "#838383",
           fontSize: "24px",
           minWidth: 0,
           fontWeight: 200,
           p: 0,
+          ...(active ? { fontWeight: 300 } : {}),
           textTransform: 'lowercase',
           "&:hover": {
             backgroundColor: "transparent",
@@ -119,7 +119,12 @@ export function SiteFooter() {
 
   return (
     <footer>
-      <FullWidthDivider />
+      <Divider
+        sx={{
+          borderColor: "#6E6E6E",
+          width: "100%",
+        }}
+      />
       <div className="mx-auto justify-between flex items-center w-full max-w-[1280px] gap-4 px-6 py-12 md:px-36">
         {links.map((item) =>
           item.external ? (

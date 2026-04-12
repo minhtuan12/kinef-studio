@@ -72,8 +72,8 @@ export function orderStatusLabel(value: OrderStatus) {
 export function paymentStatusLabel(value: PaymentStatus) {
   return {
     unpaid: "Unpaid",
-    partial: "Partial",
-    paid: "Paid",
+    partial: "Partial (50%)",
+    paid: "Paid (100%)",
   }[value];
 }
 

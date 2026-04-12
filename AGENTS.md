@@ -41,7 +41,7 @@ If `get_design_context` is too large, use `get_metadata` to split into child nod
   - `/custom-case`
   - `/custom-case/charms`
   - `/custom-case/order`
-  - `/custom-case/confirmation/[orderCode]`
+  - `/confirmation/[orderCode]`
 
 ## SEO and Metadata Conventions
 
