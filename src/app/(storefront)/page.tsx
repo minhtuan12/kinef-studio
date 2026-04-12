@@ -111,15 +111,14 @@ export default function HomePage() {
             </Link>
           </Box>
         </div>
-        <div className="relative min-h-[360px]max-h-[799px] bg-[#efebe5]">
-          <Image
-            src={banner}
-            alt="Kinef custom phone case hero"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+        <Image
+          height={799}
+          width={599}
+          src={banner}
+          alt="Kinef custom phone case hero"
+          className="object-cover"
+          preload
+        />
       </section>
 
       <FullWidthDivider />

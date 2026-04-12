@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Pagination, Typography } from "@mui/material";
+import { Box, Pagination, Tooltip, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useStorefront } from "../../_context/storefront-context";
@@ -96,7 +96,7 @@ export default function SelectCharmPage() {
               type="button"
               key={index}
               disabled={soldOut}
-              className={`relative min-h-[150px] border p-2 transition md:h-[182px] md:w-[182px] ${isSelected
+              className={`relative flex flex-col justify-between min-h-[150px] border p-2 transition md:h-[182px] md:w-[182px] ${isSelected
                 ? "border-black bg-black/10"
                 : "border-black bg-[#fffdfa]"
                 } ${soldOut ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-black/5"}`}
@@ -107,7 +107,7 @@ export default function SelectCharmPage() {
                   sold out
                 </span>
               ) : null}
-              <div className="relative aspect-[6/5] w-full mx-auto">
+              <div className="relative aspect-[6/5] w-full mx-auto h-[120px] mt-1">
                 <Image
                   src={charm.imageUrl ?? ""}
                   alt={charm.name}
@@ -115,22 +115,26 @@ export default function SelectCharmPage() {
                   className="object-scale-down"
                 />
               </div>
-              <Box>
+              <Box sx={{ flex: 1, display: 'flex', justifyContent: 'end', flexDirection: 'column' }}>
+                <Tooltip title={charm.name}>
+                  <Typography
+                    sx={{
+                      fontFamily: "var(--font-serif)",
+                      fontSize: "14px",
+                      fontWeight: 200,
+                      textAlign: "center",
+                      color: "#000000",
+                      lineHeight: 1,
+                    }}
+                    className="line-clamp-2"
+                  >
+                    {charm.name}
+                  </Typography>
+                </Tooltip>
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-serif)",
-                    fontSize: "14px",
-                    fontWeight: 200,
-                    textAlign: "center",
                     color: "#000000",
-                  }}
-                >
-                  {charm.name}
-                </Typography>
-                <Typography
-                  sx={{
-                    color: "#000000",
-                    mt: -0.3,
+                    mt: 0.5,
                     fontSize: "8px",
                     textAlign: "center",
                   }}

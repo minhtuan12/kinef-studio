@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Box, Typography } from "@mui/material";
 import Image from "next/image";
-import story1 from "@/assets/images/story1.png";
-import story2 from "@/assets/images/story2.png";
-import story3 from "@/assets/images/story3.png";
-import story4 from "@/assets/images/story4.png";
-import story5 from "@/assets/images/story5.png";
+import story1 from "@/assets/images/story1.svg";
+import story2 from "@/assets/images/story2.svg";
+import story3 from "@/assets/images/story3.svg";
+import story4 from "@/assets/images/story4.svg";
+import story5 from "@/assets/images/story5.svg";
 
 export const metadata: Metadata = {
   title: "Our Story",
@@ -38,6 +38,7 @@ export default function OurStoryPage() {
             color: "#000000",
             fontSize: "24px",
             lineHeight: "50px",
+            maxWidth: 472,
           }}
         >
           Kinef.studio started in 2023 - a few handmade phone cases,
@@ -50,15 +51,15 @@ export default function OurStoryPage() {
 
         <Box display={'flex'} gap={2.2}>
           <Box display={'flex'} flexDirection={'column'} gap={2.8} alignItems={'end'}>
-            <Image src={story1} className="w-auto h-auto md:max-w-[311px] md:max-h-[353px]" alt="Kinef story image 1" />
-            <Image src={story4} className="w-auto h-auto md:max-w-[263px] md:max-h-[329px]" alt="Kinef story image 4" />
+            <Image src={story1} quality={100} preload width={311} height={353} className="" alt="Kinef story image 1" />
+            <Image src={story4} quality={100} preload width={263} height={329} className="" alt="Kinef story image 4" />
           </Box>
           <Box display={'flex'} flexDirection={'column'} gap={3.5}>
-            <Image src={story2} className="w-auto h-auto md:max-w-[328px] md:max-h-[415px]" alt="Kinef story image 2" />
-            <Image src={story5} className="w-auto h-auto md:max-w-[329px] md:max-h-[261px]" alt="Kinef story image 5" />
+            <Image src={story2} quality={100} preload width={328} height={415} className="" alt="Kinef story image 2" />
+            <Image src={story5} quality={100} preload width={329} height={261} className="" alt="Kinef story image 5" />
           </Box>
         </Box>
-        <Image src={story3} className="absolute bottom-0 left-[calc(100%-840px)] w-auto h-auto md:max-w-[207px] md:max-h-[217px]" alt="Kinef story image 3" />
+        <Image src={story3} quality={100} preload width={207} height={217} className="absolute bottom-0 left-[calc(100%-840px)]" alt="Kinef story image 3" />
 
         {/* <div className="grid grid-cols-2 gap-4">
           {[story1, story2, story3, story4, story5].map(

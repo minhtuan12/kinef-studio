@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useStorefront } from "../_context/storefront-context";
 import Image from "next/image";
-import logo from "@/assets/images/logo.svg";
+import logo from "@/assets/images/logo.png";
 
 function NavLink({ href, label }: { href: string; label: string }) {
   const pathname = usePathname();
@@ -77,7 +77,7 @@ export function SiteHeader() {
           <Image
             src={logo}
             alt="Kinef Logo"
-            className="h-auto w-auto max-w-[188px] max-h-[122px] -mt-2"
+            className="h-auto w-auto max-w-[188px] max-h-[122px] -mt-1"
             priority
           />
         </Link>

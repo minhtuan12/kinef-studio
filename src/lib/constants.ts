@@ -1,6 +1,6 @@
-﻿import blackCase from '@/assets/images/black-case.png';
-import whiteCase from '@/assets/images/white-case.png';
-import clearCase from '@/assets/images/clear-case.png';
+﻿import blackCase from '@/assets/images/black-case.svg';
+import whiteCase from '@/assets/images/white-case.svg';
+import clearCase from '@/assets/images/clear-case.svg';
 import { StaticImageData } from 'next/image';
 
 export type CatalogSource = "default" | "db";
@@ -16,6 +16,8 @@ export type CaseProduct = {
   swatchClassName?: string;
   isActive: boolean;
   source: CatalogSource;
+  width: number;
+  height: number;
 };
 
 export type CharmProduct = {
@@ -44,6 +46,8 @@ export const DEFAULT_CASES: CaseProduct[] = [
     swatchClassName: "sw-white",
     isActive: true,
     source: "default",
+    width: 231,
+    height: 437,
   },
   {
     id: "case-black",
@@ -56,6 +60,8 @@ export const DEFAULT_CASES: CaseProduct[] = [
     swatchClassName: "sw-black",
     isActive: true,
     source: "default",
+    width: 270,
+    height: 445,
   },
   {
     id: "case-clear",
@@ -68,6 +74,8 @@ export const DEFAULT_CASES: CaseProduct[] = [
     swatchClassName: "sw-clear",
     isActive: true,
     source: "default",
+    width: 251,
+    height: 427,
   },
 ];
 

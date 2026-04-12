@@ -1,7 +1,6 @@
 "use client";
 
 import { Alert, Box, Card, CardContent, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
 import { useStorefront } from "../_context/storefront-context";
 import Image from "next/image";
 
@@ -12,7 +11,6 @@ function formatVnd(amount: number) {
 }
 
 export default function CustomCasePage() {
-  const router = useRouter();
   const {
     cases,
     selectedCase,
@@ -55,7 +53,7 @@ export default function CustomCasePage() {
       }
 
       <section className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-        {cases.map((item) => {
+        {cases.map((item, index) => {
           const isSelected = selectedCase?.id === item.id;
           const finalPrice = Math.round(
             (item.price * (100 - item.discountPercent)) / 100,
@@ -90,12 +88,12 @@ export default function CustomCasePage() {
                   </Typography>
                   <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
                     <Image
-                      width={0}
-                      height={0}
+                      width={item.width}
+                      height={item.height}
                       src={item.imageUrl}
                       alt={item.name}
-                      className="h-7 w-auto md:h-auto md:max-h-[437px] -mt-2"
                       priority
+                      className={index === 2 ? 'mt-3' : ''}
                     />
                   </Box>
                   <Typography
