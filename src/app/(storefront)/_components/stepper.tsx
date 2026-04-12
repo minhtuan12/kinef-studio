@@ -70,7 +70,7 @@ export function BuilderStepper() {
                 : "border-black text-black"
                 }`}
             >
-              <span className="-mt-1.5">{index + 1}</span>
+              <span className={`-mt-2 ${index + 1 === 3 ? '-mt-4' : ''}`}>{index + 1}</span>
             </div>
             <Typography
               component="span"
