@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Link from "next/link";
 
 export const metadata: Metadata = {
