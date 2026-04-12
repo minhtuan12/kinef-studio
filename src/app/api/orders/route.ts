@@ -77,6 +77,12 @@ async function decrementCharmStocks(charmIds: string[]) {
   return true;
 }
 
+function extractSepayCode(url: string): string | null {
+  const match = url?.match(/[?&]order_id=([^&]+)/);
+  if (match) return match[1];
+  return null;
+}
+
 const client = new SePayPgClient({
   env: 'production',
   merchant_id: process.env.SEPAY_MERCHANT_ID!,
@@ -208,6 +214,9 @@ export async function POST(request: Request) {
       error_url: confirmationUrl,
       cancel_url: confirmationUrl,
     });
+
+    const paymentCode = extractSepayCode(checkoutURL);
+    await Order.findOneAndUpdate({ orderCode }, { $set: { paymentCode } });
 
     return NextResponse.json({
       orderCode,

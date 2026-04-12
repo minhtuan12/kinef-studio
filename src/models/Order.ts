@@ -82,6 +82,10 @@ const orderSchema = new Schema(
       enum: ["pending", "confirmed", "in_progress", "completed", "cancelled"],
       default: "pending",
     },
+    paymentCode: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 );

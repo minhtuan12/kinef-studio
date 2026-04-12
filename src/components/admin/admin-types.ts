@@ -78,6 +78,7 @@ export type AdminOrder = {
   notes?: string;
   referenceImageUrl?: string | null;
   createdAt?: string;
+  paymentCode?: string;
 };
 
 export type CaseForm = {

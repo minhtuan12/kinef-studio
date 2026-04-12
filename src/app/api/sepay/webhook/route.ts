@@ -55,11 +55,7 @@ async function readWebhookPayload(request: Request): Promise<WebhookPayload> {
 
 function resolveInvoiceCode(payload: WebhookPayload) {
   const raw = getFromPayload(payload, [
-    "order_invoice_number",
-    "order_code",
-    "orderCode",
-    "invoice",
-    "invoice_number",
+    "code",
   ]);
 
   return typeof raw === "string" ? raw.trim() : "";
@@ -76,43 +72,6 @@ function resolveApiKeyFromAuthorizationHeader(authorizationHeader: string | null
   }
 
   return match[1]?.trim() ?? null;
-}
-
-function isSuccessfulWebhook(payload: WebhookPayload) {
-  const statusRaw = getFromPayload(payload, [
-    "status",
-    "payment_status",
-    "transaction_status",
-    "order_status",
-  ]);
-
-  const status = typeof statusRaw === "string" ? statusRaw.toLowerCase().trim() : "";
-  if (status) {
-    if (SUCCESS_STATUSES.has(status)) {
-      return true;
-    }
-
-    if (FAILED_STATUSES.has(status)) {
-      return false;
-    }
-  }
-
-  const isPaidRaw = getFromPayload(payload, ["is_paid", "paid", "success"]);
-  if (typeof isPaidRaw === "boolean") {
-    return isPaidRaw;
-  }
-
-  if (typeof isPaidRaw === "string") {
-    const normalized = isPaidRaw.toLowerCase().trim();
-    if (normalized === "true" || normalized === "1") {
-      return true;
-    }
-    if (normalized === "false" || normalized === "0") {
-      return false;
-    }
-  }
-
-  return false;
 }
 
 export async function POST(request: Request) {
@@ -132,25 +91,14 @@ export async function POST(request: Request) {
     }
 
     const payload = await readWebhookPayload(request);
-    const sepayInvoiceCode = resolveInvoiceCode(payload);
-    if (!sepayInvoiceCode) {
-      return NextResponse.json({ message: "Missing order invoice number." }, { status: 400 });
-    }
-
-    if (!isSuccessfulWebhook(payload)) {
-      return NextResponse.json({
-        message: "Webhook received but payment is not successful. No update performed.",
-      });
-    }
-
-    const normalizedOrderCode = normalizeOrderCode(sepayInvoiceCode);
-    if (!normalizedOrderCode) {
-      return NextResponse.json({ message: "Invalid order invoice number." }, { status: 400 });
+    const sepayPaymentCode = resolveInvoiceCode(payload);
+    if (!sepayPaymentCode) {
+      return NextResponse.json({ message: "Missing payment code." }, { status: 400 });
     }
 
     await connectToDatabase();
 
-    const order = await Order.findOne({ orderCode: normalizedOrderCode });
+    const order = await Order.findOne({ paymentCode: sepayPaymentCode });
 
     if (!order) {
       return NextResponse.json({ message: "Order not found." }, { status: 404 });
