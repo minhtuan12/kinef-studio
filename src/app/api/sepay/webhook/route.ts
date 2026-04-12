@@ -55,7 +55,7 @@ async function readWebhookPayload(request: Request): Promise<WebhookPayload> {
 
 function resolveInvoiceCode(payload: WebhookPayload) {
   const raw = getFromPayload(payload, [
-    "code",
+    "order_id",
   ]);
 
   return typeof raw === "string" ? raw.trim() : "";
