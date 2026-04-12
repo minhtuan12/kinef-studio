@@ -98,7 +98,7 @@ export async function POST(request: Request) {
     }
 
     const sepayOrder = await client.order.all({ q: sepayPaymentCode });
-    const orderCode = sepayOrder.data?.[0]?.order_invoice_number ?? null;
+    const orderCode = sepayOrder.data.data?.[0]?.order_invoice_number ?? null;
 
     await connectToDatabase();
 
