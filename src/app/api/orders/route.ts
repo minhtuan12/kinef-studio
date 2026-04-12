@@ -78,7 +78,7 @@ async function decrementCharmStocks(charmIds: string[]) {
 }
 
 const client = new SePayPgClient({
-  env: 'sandbox',
+  env: 'production',
   merchant_id: process.env.SEPAY_MERCHANT_ID!,
   secret_key: process.env.SEPAY_SECRET_KEY!,
 });

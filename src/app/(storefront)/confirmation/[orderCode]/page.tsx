@@ -93,40 +93,44 @@ export default async function ConfirmationPage({ params }: PageProps) {
                     {currentCopy.message}
                 </Alert>
 
-                <div className="border-y border-black/20 py-5">
-                    <Typography
-                        sx={{
-                            textTransform: "uppercase",
-                            letterSpacing: "0.2em",
-                            fontSize: "11px",
-                            color: "#838383",
-                        }}
-                    >
-                        Order code
-                    </Typography>
-                    <Typography
-                        sx={{
-                            fontFamily: "var(--font-serif)",
-                            fontSize: { xs: "32px", md: "46px" },
-                            mt: 1,
-                        }}
-                    >
-                        {orderCode}
-                    </Typography>
-                </div>
+                {paymentState === 'success' &&
+                    <>
+                        <div className="border-y border-black/20 py-5">
+                            <Typography
+                                sx={{
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.2em",
+                                    fontSize: "11px",
+                                    color: "#838383",
+                                }}
+                            >
+                                Order code
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    fontFamily: "var(--font-serif)",
+                                    fontSize: { xs: "32px", md: "46px" },
+                                    mt: 1,
+                                }}
+                            >
+                                {orderCode}
+                            </Typography>
+                        </div>
 
-                <Typography sx={{ mt: 5, color: "#5f5a57" }}>
-                    DM{" "}
-                    <Link
-                        className="!underline"
-                        href="https://instagram.com/kinef.studio"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        @kinef.studio
-                    </Link>{" "}
-                    with your order code for mockup confirmation.
-                </Typography>
+                        <Typography sx={{ mt: 5, color: "#5f5a57" }}>
+                            DM{" "}
+                            <Link
+                                className="!underline"
+                                href="https://instagram.com/kinef.studio"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                @kinef.studio
+                            </Link>{" "}
+                            with your order code for mockup confirmation.
+                        </Typography>
+                    </>
+                }
             </section>
 
             <div className="mt-8 flex justify-center gap-3">
