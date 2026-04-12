@@ -40,7 +40,7 @@ export function BottomAction() {
 		</Typography>
 		<Button
 			variant="outlined"
-			disabled={!selectedCase || selectedCharms?.length === 0}
+			disabled={(!selectedCase && currentStep === 1) || (selectedCharms?.length === 0 && currentStep === 2)}
 			sx={{
 				borderColor: "#1a1816",
 				color: "#1a1816",
