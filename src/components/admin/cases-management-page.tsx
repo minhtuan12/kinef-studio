@@ -24,7 +24,14 @@ import {
 import { useAdminContext } from "./admin-context";
 import { AdminPageSection, ToneBadge } from "./admin-shell";
 import styles from "./admin.module.css";
-import { INITIAL_CASE_FORM, caseFinalPrice, cx, money } from "./admin-utils";
+import {
+  formatMoneyInput,
+  INITIAL_CASE_FORM,
+  caseFinalPrice,
+  cx,
+  money,
+  sanitizeMoneyInput,
+} from "./admin-utils";
 import type { AdminCase, CaseForm } from "./admin-types";
 import { Switch } from "@mui/material";
 
@@ -557,13 +564,15 @@ export default function CasesManagementPage() {
               <label className={styles.field}>
                 <span>Base price</span>
                 <input
-                  type="number"
-                  min={0}
-                  value={form.price}
+                  type="text"
+                  inputMode="numeric"
+                  value={formatMoneyInput(form.price)}
                   onChange={(event) =>
                     setForm((current) => ({
                       ...current,
-                      price: event.target.value,
+                      price: sanitizeMoneyInput(
+                        event.target.value,
+                      ),
                     }))
                   }
                   required

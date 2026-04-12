@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { Download, RefreshCcw, Save } from "lucide-react";
+import { Download, Loader2, RefreshCcw, Save } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAdminContext } from "./admin-context";
 import {
@@ -43,7 +43,7 @@ function createDraft(order: AdminOrder): OrderDraft {
 }
 
 export default function OrdersManagementPage() {
-  const { adminKey, hasAdminKey, notify, req } = useAdminContext();
+  const { adminKey, hasAdminKey, notify, req, messageApi } = useAdminContext();
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [drafts, setDrafts] = useState<Record<string, OrderDraft>>({});
   const [loading, setLoading] = useState(false);
@@ -189,15 +189,12 @@ export default function OrdersManagementPage() {
         method: "PUT",
         body: JSON.stringify(draft),
       });
-      notify("success", "Order updated.");
+      messageApi.success("Successful");
       await loadOrders();
     } catch (error) {
-      notify(
-        "error",
-        error instanceof Error
-          ? error.message
-          : "Failed to update order.",
-      );
+      messageApi.error(error instanceof Error
+        ? error.message
+        : "Failed to update order.");
     } finally {
       setSavingId(null);
     }
@@ -596,7 +593,7 @@ export default function OrdersManagementPage() {
 
                 <label className={styles.field}>
                   <span>Paid amount</span>
-                  {selectedDraft.paidAmount}
+                  {money(selectedDraft.paidAmount)}
                 </label>
 
                 <button
@@ -609,7 +606,7 @@ export default function OrdersManagementPage() {
                     !hasAdminKey
                   }
                 >
-                  <Save size={15} />
+                  {savingId === selectedOrder.id ? <Loader2 className="animate-spin" /> : <Save size={15} />}
                   <span>
                     {savingId === selectedOrder.id
                       ? "Saving"

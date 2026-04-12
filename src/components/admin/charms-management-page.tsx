@@ -25,7 +25,12 @@ import { Switch } from "@mui/material";
 import { useAdminContext } from "./admin-context";
 import { AdminPageSection } from "./admin-shell";
 import styles from "./admin.module.css";
-import { INITIAL_CHARM_FORM, money } from "./admin-utils";
+import {
+    formatMoneyInput,
+    INITIAL_CHARM_FORM,
+    money,
+    sanitizeMoneyInput,
+} from "./admin-utils";
 import type { AdminCharm, CharmForm } from "./admin-types";
 
 type FilterMode = "all" | "active" | "inactive" | "low_stock";
@@ -468,13 +473,15 @@ export default function CharmsManagementPage() {
                             <label className={styles.field}>
                                 <span>Base price</span>
                                 <input
-                                    type="number"
-                                    min={0}
-                                    value={form.price}
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={formatMoneyInput(form.price)}
                                     onChange={(event) =>
                                         setForm((current) => ({
                                             ...current,
-                                            price: event.target.value,
+                                            price: sanitizeMoneyInput(
+                                                event.target.value,
+                                            ),
                                         }))
                                     }
                                     required
@@ -531,7 +538,7 @@ export default function CharmsManagementPage() {
                                 className={styles.primaryAction}
                                 disabled={saving || !hasAdminKey}
                             >
-                                <Save size={15} />
+                                {saving ? <Loader2 className="animate-spin" /> : <Save size={15} />}
                                 <span>Save</span>
                             </button>
                             <button

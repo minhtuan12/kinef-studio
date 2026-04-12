@@ -42,6 +42,19 @@ export function money(value: number) {
   return `${new Intl.NumberFormat("vi-VN").format(value)} VND`;
 }
 
+export function sanitizeMoneyInput(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+export function formatMoneyInput(value: string) {
+  const digits = sanitizeMoneyInput(value);
+  if (!digits) {
+    return "";
+  }
+
+  return new Intl.NumberFormat("vi-VN").format(Number(digits));
+}
+
 export function formatDate(value?: string) {
   if (!value) {
     return "Not set";
