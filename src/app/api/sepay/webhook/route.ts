@@ -55,7 +55,7 @@ async function readWebhookPayload(request: Request): Promise<WebhookPayload> {
 
 function resolveInvoiceCode(payload: WebhookPayload) {
   const raw = getFromPayload(payload, [
-    "order_id",
+    "code",
   ]);
 
   return typeof raw === "string" ? raw.trim() : "";
@@ -96,9 +96,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Missing payment code." }, { status: 400 });
     }
 
+    const orderCode = payload.custom_data;
+
     await connectToDatabase();
 
-    const order = await Order.findOne({ paymentCode: sepayPaymentCode });
+    const order = await Order.findOne({ orderCode });
 
     if (!order) {
       return NextResponse.json({ message: "Order not found." }, { status: 404 });

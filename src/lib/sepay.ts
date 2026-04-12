@@ -1,4 +1,6 @@
-﻿export type SepayOrderResponse = {
+﻿import { SePayPgClient } from "sepay-pg-node";
+
+export type SepayOrderResponse = {
   id: string;
   orderCode: string;
   amount: number;
@@ -12,6 +14,12 @@ type CreateSepayOrderParams = {
   orderCode: string;
   description: string;
 };
+
+export const client = new SePayPgClient({
+  env: 'production',
+  merchant_id: process.env.SEPAY_MERCHANT_ID!,
+  secret_key: process.env.SEPAY_SECRET_KEY!,
+});
 
 function getSepayConfig() {
   const apiToken = process.env.SEPAY_API_TOKEN;

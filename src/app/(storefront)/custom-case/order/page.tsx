@@ -127,7 +127,7 @@ export default function OrderPage() {
 
   const submitOrder = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!selectedCase || selectedCharms.length === 0) {
+    if (!selectedCase) {
       return;
     }
 
@@ -151,7 +151,7 @@ export default function OrderPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           caseId: selectedCase.id,
-          charmIds: selectedCharms.map((charm) => charm.id),
+          charmIds: (selectedCharms ?? []).map((charm) => charm.id),
           customer: {
             name: formValues.name.trim(),
             instagram: formValues.instagram.trim(),

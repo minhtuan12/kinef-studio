@@ -13,7 +13,7 @@ import { CharmModel } from "@/models/Charm";
 import { Order } from "@/models/Order";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
-import { SePayPgClient } from "sepay-pg-node";
+import { client } from "@/lib/sepay";
 
 function createOrderCode() {
   const seed = Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -82,12 +82,6 @@ function extractSepayCode(url: string): string | null {
   if (match) return match[1];
   return null;
 }
-
-const client = new SePayPgClient({
-  env: 'production',
-  merchant_id: process.env.SEPAY_MERCHANT_ID!,
-  secret_key: process.env.SEPAY_SECRET_KEY!,
-});
 
 export async function POST(request: Request) {
   try {
@@ -213,10 +207,11 @@ export async function POST(request: Request) {
       success_url: confirmationUrl,
       error_url: confirmationUrl,
       cancel_url: confirmationUrl,
+      custom_data: orderCode,
     });
 
-    const paymentCode = extractSepayCode(checkoutURL);
-    await Order.findOneAndUpdate({ orderCode }, { $set: { paymentCode } });
+    // const paymentCode = extractSepayCode(checkoutURL);
+    // await Order.findOneAndUpdate({ orderCode }, { $set: { paymentCode } });
 
     return NextResponse.json({
       orderCode,
