@@ -150,22 +150,18 @@ export default function AdminOverviewPage() {
         <AdminStat
           label="Active catalog"
           value={String(metrics.activeCatalog)}
-          hint={`${cases.length} cases and ${charms.length} charms in the workspace`}
         />
         <AdminStat
           label="Orders in motion"
           value={String(metrics.pendingOrders)}
-          hint="Pending or in-progress orders that still need operational attention"
         />
         <AdminStat
           label="Booked revenue"
           value={money(metrics.totalRevenue)}
-          hint={`${money(metrics.paidRevenue)} recorded as paid so far`}
         />
         <AdminStat
           label="Low stock charms"
           value={String(metrics.lowStock)}
-          hint="Active charms with fewer than five units remaining"
         />
       </section>
 
