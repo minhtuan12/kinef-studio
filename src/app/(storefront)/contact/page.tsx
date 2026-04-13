@@ -5,8 +5,27 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Contact Kinef Studio for custom case support, order updates, and collaborations.",
+    "Contact Kinef Studio for custom case support, order updates, collaborations, and the official Instagram @kinef.studio.",
+  keywords: [
+    "kinef studio instagram",
+    "@kinef.studio",
+    "kinef contact",
+    "custom case support",
+  ],
   alternates: { canonical: "/contact" },
+  openGraph: {
+    type: "website",
+    title: "Contact | Kinef Studio",
+    description:
+      "Reach out for order updates, support, collaborations, and connect on Instagram @kinef.studio.",
+    url: "/contact",
+  },
+  twitter: {
+    card: "summary",
+    title: "Contact | Kinef Studio",
+    description:
+      "Reach out for order updates, support, collaborations, and connect on Instagram @kinef.studio.",
+  },
 };
 
 export default function ContactPage() {
@@ -66,7 +85,16 @@ export default function ContactPage() {
               fontSize: 24,
             }}
           >
-            Instagram: <Link className="!underline" href={'https://instagram.com/kinef.studio'}>Kinef.studio</Link>
+            Instagram:{" "}
+            <Link
+              className="!underline"
+              href="https://instagram.com/kinef.studio"
+              target="_blank"
+              rel="me noopener noreferrer"
+              aria-label="Official Kinef Studio Instagram profile @kinef.studio"
+            >
+              @kinef.studio
+            </Link>
           </Typography>
           <Typography
             component="p"

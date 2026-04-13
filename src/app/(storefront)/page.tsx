@@ -10,12 +10,25 @@ export const metadata: Metadata = {
   title: "Custom Phone Cases",
   description:
     "Handmade custom phone cases by Kinef Studio. Choose a base, select one-of-a-kind charms, and place your order online.",
+  keywords: [
+    "custom phone case",
+    "handmade phone case",
+    "phone case charms",
+    "resin case",
+  ],
   alternates: { canonical: "/" },
   openGraph: {
+    type: "website",
     title: "Kinef Studio - Custom Phone Cases",
     description:
       "Each case is handmade to order. Build your own one-of-a-kind custom phone case with curated charms.",
     url: "/",
+  },
+  twitter: {
+    card: "summary",
+    title: "Kinef Studio - Custom Phone Cases",
+    description:
+      "Each case is handmade to order. Build your own one-of-a-kind custom phone case with curated charms.",
   },
 };
 

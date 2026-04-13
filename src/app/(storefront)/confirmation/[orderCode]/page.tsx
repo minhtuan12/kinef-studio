@@ -123,7 +123,7 @@ export default async function ConfirmationPage({ params }: PageProps) {
                                 className="!underline"
                                 href="https://instagram.com/kinef.studio"
                                 target="_blank"
-                                rel="noreferrer"
+                                rel="me noopener noreferrer"
                             >
                                 @kinef.studio
                             </Link>{" "}
@@ -137,7 +137,7 @@ export default async function ConfirmationPage({ params }: PageProps) {
                 <a
                     href="https://instagram.com/kinef.studio"
                     target="_blank"
-                    rel="noreferrer"
+                    rel="me noopener noreferrer"
                 >
                     <Button variant="outlined" sx={{ borderRadius: 0, px: 3 }}>
                         Contact @kinef.studio

@@ -132,7 +132,8 @@ export function SiteFooter() {
               key={item.label}
               href={item.href}
               target="_blank"
-              rel="noreferrer"
+              rel="me noopener noreferrer"
+              aria-label="Kinef Studio Instagram profile"
               className="text-[24px] font-[200] text-black w-fit transition hover:text-black"
             >
               {item.label}

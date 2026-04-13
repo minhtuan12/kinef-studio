@@ -11,7 +11,21 @@ export const metadata: Metadata = {
   title: "Our Story",
   description:
     "Kinef Studio started in 2023 and creates handmade Mediterranean-inspired custom pieces, including one-of-a-kind phone cases.",
+  keywords: ["Kinef Studio", "our story", "handmade brand", "custom phone case studio"],
   alternates: { canonical: "/our-story" },
+  openGraph: {
+    type: "article",
+    title: "Our Story | Kinef Studio",
+    description:
+      "How Kinef Studio started and why each handmade piece is intentionally one-of-a-kind.",
+    url: "/our-story",
+  },
+  twitter: {
+    card: "summary",
+    title: "Our Story | Kinef Studio",
+    description:
+      "How Kinef Studio started and why each handmade piece is intentionally one-of-a-kind.",
+  },
 };
 
 export default function OurStoryPage() {

@@ -4,6 +4,10 @@ export const metadata: Metadata = {
   title: "Shipping",
   description: "Shipping timeline and delivery notes for Kinef Studio handmade custom case orders.",
   alternates: { canonical: "/shipping" },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function ShippingPage() {
@@ -20,4 +24,3 @@ export default function ShippingPage() {
   // );
   return null;
 }
-

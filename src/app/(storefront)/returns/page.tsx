@@ -4,6 +4,10 @@ export const metadata: Metadata = {
   title: "Returns",
   description: "Return and replacement policy for Kinef Studio custom handmade products.",
   alternates: { canonical: "/returns" },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function ReturnsPage() {
@@ -20,4 +24,3 @@ export default function ReturnsPage() {
   // );
   return null;
 }
-
