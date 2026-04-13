@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import banner from "@/assets/images/banner.svg";

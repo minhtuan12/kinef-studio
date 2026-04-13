@@ -8,7 +8,6 @@ import styles from "./admin.module.css";
 import { formatDate, money } from "./admin-utils";
 import type { AdminCase, AdminCharm, AdminOrder } from "./admin-types";
 
-
 type RevenueBucket = { label: string; total: number };
 
 function monthBuckets(orders: AdminOrder[]) {

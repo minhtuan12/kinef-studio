@@ -8,7 +8,7 @@ import {
   type CaseProduct,
   type CharmProduct,
 } from "@/lib/constants";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export type OrderForm = {
   name: string;
@@ -17,6 +17,28 @@ export type OrderForm = {
   phoneModel: string;
   address: string;
   notes: string;
+};
+
+export type CartItem = {
+  id: string;
+  caseItem: {
+    id: string;
+    name: string;
+    imageUrl: string;
+    unitPrice: number;
+  };
+  charms: Array<{
+    id: string;
+    name: string;
+    icon: string;
+    imageUrl: string | null;
+    unitPrice: number;
+  }>;
+  customer: OrderForm;
+  casePrice: number;
+  charmTotal: number;
+  totalPrice: number;
+  addedAt: string;
 };
 
 type StorefrontContextValue = {
@@ -29,17 +51,21 @@ type StorefrontContextValue = {
   referenceFile: File | null;
   isCatalogLoading: boolean;
   cartCount: number;
+  cartItems: CartItem[];
   setSelectedCase: (next: CaseProduct | null) => void;
   toggleCharm: (charm: CharmProduct) => void;
   removeCharm: (charmId: string) => void;
   setOrderFormField: (key: keyof OrderForm, value: string) => void;
   setReferenceFile: (file: File | null) => void;
   resetBuilder: () => void;
+  addCurrentSelectionToCart: (formPatch?: Partial<OrderForm>) => boolean;
+  removeCartItem: (itemId: string) => void;
+  clearCart: () => void;
+  hydrateBuilderFromCartItem: (itemId: string) => boolean;
   casePrice: number;
   charmTotal: number;
   totalPrice: number;
   maxCharmsPerOrder: number;
-  incrementCartCount: () => void;
 };
 
 const initialOrderForm: OrderForm = {
@@ -51,7 +77,20 @@ const initialOrderForm: OrderForm = {
   notes: "",
 };
 
+const CART_STORAGE_KEY = "kinef-storefront-cart-v1";
+
 const StorefrontContext = createContext<StorefrontContextValue | null>(null);
+
+function getRandomId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function resolveCaseImage(image: CaseProduct["imageUrl"]): string {
+  return typeof image === "string" ? image : image.src;
+}
 
 export function StorefrontProvider({ children }: { children: React.ReactNode }) {
   const [cases, setCases] = useState<CaseProduct[]>(DEFAULT_CASES);
@@ -62,7 +101,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   const [referenceFile, setReferenceFile] = useState<File | null>(null);
   const [isCatalogLoading, setIsCatalogLoading] = useState<boolean>(true);
   const [dataLoadError, setDataLoadError] = useState<string | null>(null);
-  const [cartCount, setCartCount] = useState<number>(0);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
     const loadCatalog = async () => {
@@ -100,6 +139,31 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
 
     void loadCatalog();
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
+      const raw = window.localStorage.getItem(CART_STORAGE_KEY);
+      if (!raw) {
+        return;
+      }
+      const parsed = JSON.parse(raw) as CartItem[];
+      if (Array.isArray(parsed)) {
+        setCartItems(parsed);
+      }
+    } catch {
+      setCartItems([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const toggleCharm = (charm: CharmProduct) => {
     if (charm.stock === 0 || !charm.isActive) {
@@ -147,6 +211,91 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   );
 
   const totalPrice = casePrice + charmTotal;
+  const cartCount = cartItems.length;
+
+  const addCurrentSelectionToCart = useCallback(
+    (formPatch?: Partial<OrderForm>) => {
+      if (!selectedCase) {
+        return false;
+      }
+
+      const customer = { ...orderForm, ...formPatch };
+      const nextItem: CartItem = {
+        id: getRandomId(),
+        caseItem: {
+          id: selectedCase.id,
+          name: selectedCase.name,
+          imageUrl: resolveCaseImage(selectedCase.imageUrl),
+          unitPrice: calculateDiscountedPrice(
+            selectedCase.price,
+            selectedCase.discountPercent,
+          ),
+        },
+        charms: selectedCharms.map((charm) => ({
+          id: charm.id,
+          name: charm.name,
+          icon: charm.icon,
+          imageUrl: charm.imageUrl,
+          unitPrice: calculateDiscountedPrice(charm.price, charm.discountPercent),
+        })),
+        customer,
+        casePrice,
+        charmTotal,
+        totalPrice,
+        addedAt: new Date().toISOString(),
+      };
+
+      setOrderForm(customer);
+      setCartItems((prev) => [nextItem, ...prev]);
+      return true;
+    },
+    [selectedCase, selectedCharms, orderForm, casePrice, charmTotal, totalPrice],
+  );
+
+  const removeCartItem = useCallback((itemId: string) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== itemId));
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setCartItems([]);
+  }, []);
+
+  const hydrateBuilderFromCartItem = useCallback(
+    (itemId: string) => {
+      const item = cartItems.find((entry) => entry.id === itemId);
+      if (!item) {
+        return false;
+      }
+
+      const nextCase = cases.find((entry) => entry.id === item.caseItem.id);
+      if (!nextCase) {
+        return false;
+      }
+
+      const nextCharms = item.charms
+        .map(
+          (cartCharm) =>
+            charms.find((entry) => entry.id === cartCharm.id) ?? {
+              id: cartCharm.id,
+              name: cartCharm.name,
+              icon: cartCharm.icon,
+              price: cartCharm.unitPrice,
+              discountPercent: 0,
+              stock: 1,
+              imageUrl: cartCharm.imageUrl,
+              isActive: true,
+              source: "default" as const,
+            },
+        )
+        .filter(Boolean);
+
+      setSelectedCase(nextCase);
+      setSelectedCharms(nextCharms);
+      setOrderForm(item.customer);
+      return true;
+    },
+    [cartItems, cases, charms],
+  );
 
   const value = useMemo<StorefrontContextValue>(
     () => ({
@@ -159,17 +308,21 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
       referenceFile,
       isCatalogLoading,
       cartCount,
+      cartItems,
       setSelectedCase,
       toggleCharm,
       removeCharm,
       setOrderFormField,
       setReferenceFile,
       resetBuilder,
+      addCurrentSelectionToCart,
+      removeCartItem,
+      clearCart,
+      hydrateBuilderFromCartItem,
       casePrice,
       charmTotal,
       totalPrice,
       maxCharmsPerOrder: MAX_CHARMS_PER_ORDER,
-      incrementCartCount: () => setCartCount((prev) => prev + 1),
     }),
     [
       cases,
@@ -181,6 +334,11 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
       referenceFile,
       isCatalogLoading,
       cartCount,
+      cartItems,
+      addCurrentSelectionToCart,
+      removeCartItem,
+      clearCart,
+      hydrateBuilderFromCartItem,
       casePrice,
       charmTotal,
       totalPrice,
@@ -197,4 +355,3 @@ export function useStorefront() {
   }
   return context;
 }
-

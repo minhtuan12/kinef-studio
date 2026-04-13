@@ -38,6 +38,7 @@ If `get_design_context` is too large, use `get_metadata` to split into child nod
 - Shared storefront state is managed by `src/app/(storefront)/_context/storefront-context.tsx`.
 - Shared site shell (announcement/header/footer) is in `src/app/(storefront)/layout.tsx` + `_components/site-chrome.tsx`.
 - Builder flow routes:
+  - `/cart`
   - `/custom-case`
   - `/custom-case/charms`
   - `/custom-case/order`
@@ -57,4 +58,3 @@ Whenever storefront architecture changes, update:
 - `README.md` (feature/routes/setup summary)
 - `CODEBASE_STRUCTURE.md` (source-of-truth structure notes)
 - `AGENTS.md` / `CLAUDE.md` (rule and workflow expectations)
-

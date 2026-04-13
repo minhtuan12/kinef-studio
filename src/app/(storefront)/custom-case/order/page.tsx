@@ -56,12 +56,17 @@ export default function OrderPage() {
     totalPrice,
     orderForm,
     setOrderFormField,
-    incrementCartCount,
+    addCurrentSelectionToCart,
   } = useStorefront();
   const [formValues, setFormValues] = useState(orderForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [cartNotice, setCartNotice] = useState<string | null>(null);
   type OrderFormField = keyof typeof orderForm;
+  const disablePlaceOrder = !formValues.name?.trim() ||
+    !formValues.instagram?.trim() ||
+    !formValues.phoneNumber?.trim() ||
+    !formValues.phoneModel?.trim();
 
   useEffect(() => {
     if (!selectedCase) {
@@ -77,6 +82,7 @@ export default function OrderPage() {
   const updateFormField = useCallback(
     (key: OrderFormField, value: string) => {
       setSubmitError(null);
+      setCartNotice(null);
       setFormValues((prev) =>
         prev[key] === value ? prev : { ...prev, [key]: value },
       );
@@ -131,12 +137,7 @@ export default function OrderPage() {
       return;
     }
 
-    if (
-      !formValues.name?.trim() ||
-      !formValues.instagram?.trim() ||
-      !formValues.phoneNumber?.trim() ||
-      !formValues.phoneModel?.trim()
-    ) {
+    if (disablePlaceOrder) {
       setSubmitError("Please fill out information");
       return;
     }
@@ -174,7 +175,6 @@ export default function OrderPage() {
         throw new Error(orderData.message ?? "Unable to place order.");
       }
 
-      incrementCartCount();
       const orderCode = orderData.orderCode;
       if (orderData.checkoutUrl && orderData.checkoutFormFields) {
         redirectToSepay(orderData.checkoutUrl, orderData.checkoutFormFields);
@@ -191,6 +191,16 @@ export default function OrderPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const addToCart = () => {
+    syncFormToStorefront();
+    const added = addCurrentSelectionToCart(formValues);
+    if (!added) {
+      setCartNotice("Please select a case before adding to cart.");
+      return;
+    }
+    setCartNotice("Added to cart. You can review and continue from cart anytime.");
   };
 
   const orderSummary = useMemo(
@@ -307,6 +317,7 @@ export default function OrderPage() {
       </Typography>
 
       {!!submitError && <Alert sx={{ mb: 2 }} severity="error">{submitError}</Alert>}
+      {!!cartNotice && <Alert sx={{ mb: 2 }} severity="success">{cartNotice}</Alert>}
 
       <form
         id="order-form"
@@ -421,23 +432,42 @@ export default function OrderPage() {
         >
           step 3 of 3
         </Typography>
-        <Button
-          form="order-form"
-          type="submit"
-          disabled={isSubmitting}
-          variant="outlined"
-          sx={{
-            color: "#ffffff",
-            borderColor: "#000000",
-            borderRadius: 0,
-            px: 5,
-            textTransform: "none",
-            height: 40,
-          }}
-          className="flex items-center justify-center gap-2 !bg-black hover:!bg-white hover:!text-black"
-        >
-          Place order <ArrowRight size={13} className="-mt-0.5" />
-        </Button>
+        <div className="flex w-full flex-col items-stretch gap-3 md:w-auto md:flex-row md:items-center">
+          <Button
+            type="button"
+            disabled={isSubmitting}
+            variant="outlined"
+            onClick={addToCart}
+            sx={{
+              color: "#1a1816",
+              borderColor: "#1a1816",
+              borderRadius: 0,
+              px: 5,
+              textTransform: "none",
+              height: 40,
+            }}
+            className="hover:!bg-black hover:!text-white"
+          >
+            Add to cart
+          </Button>
+          <Button
+            form="order-form"
+            type="submit"
+            disabled={isSubmitting || disablePlaceOrder}
+            variant="outlined"
+            sx={{
+              color: "#ffffff",
+              borderColor: "#000000",
+              borderRadius: 0,
+              px: 5,
+              textTransform: "none",
+              height: 40,
+            }}
+            className="flex items-center justify-center gap-2 !bg-black hover:!bg-white hover:!text-black disabled:!opacity-50 disabled:!cursor-not-allowed disabled:!pointer-events-none disabled:!text-white"
+          >
+            Place order <ArrowRight size={13} className="-mt-0.5" />
+          </Button>
+        </div>
       </div>
 
       {isSubmitting ? (

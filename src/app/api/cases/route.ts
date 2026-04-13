@@ -1,5 +1,4 @@
-﻿// import { listStoreCases } from "@/lib/catalog";
-import { connectToDatabase } from "@/lib/db";
+﻿import { connectToDatabase } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {

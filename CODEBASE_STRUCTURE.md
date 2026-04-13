@@ -25,6 +25,7 @@ This repository contains:
 - `layout.tsx` shared storefront shell + provider/theme
 - `page.tsx` home
 - `our-story/page.tsx`
+- `cart/page.tsx` saved cart builds with resume-to-step-3 flow
 - `custom-case/page.tsx`
 - `custom-case/charms/page.tsx`
 - `custom-case/order/page.tsx`
@@ -36,6 +37,7 @@ This repository contains:
 Shared storefront internals:
 
 - `_context/storefront-context.tsx` catalog + builder state across routes
+- `_context/storefront-context.tsx` now also persists cart items in `localStorage`
 - `_components/site-chrome.tsx` announcement/header/footer
 - `_components/stepper.tsx` step progress UI
 - `_components/storefront-theme-provider.tsx` MUI theme setup
@@ -82,4 +84,3 @@ Admin remains isolated:
 - Root `metadataBase` from `NEXT_PUBLIC_SITE_URL` fallback
 - Route metadata on public pages/layouts
 - Metadata route files (`robots.ts`, `sitemap.ts`) aligned to public pages
-

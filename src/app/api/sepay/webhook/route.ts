@@ -5,13 +5,6 @@ import { NextResponse } from "next/server";
 
 type WebhookPayload = Record<string, unknown>;
 
-const SUCCESS_STATUSES = new Set(["success", "succeeded", "paid", "completed"]);
-const FAILED_STATUSES = new Set(["failed", "error", "cancelled", "canceled"]);
-
-function normalizeOrderCode(rawOrderCode: string) {
-  return rawOrderCode.split("-")[0]?.trim().toUpperCase();
-}
-
 function asRecord(value: unknown): Record<string, unknown> {
   if (typeof value === "object" && value !== null) {
     return value as Record<string, unknown>;

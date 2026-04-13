@@ -22,12 +22,11 @@ import {
   type FormEvent,
 } from "react";
 import { useAdminContext } from "./admin-context";
-import { AdminPageSection, ToneBadge } from "./admin-shell";
+import { AdminPageSection } from "./admin-shell";
 import styles from "./admin.module.css";
 import {
   formatMoneyInput,
   INITIAL_CASE_FORM,
-  caseFinalPrice,
   cx,
   money,
   sanitizeMoneyInput,

@@ -8,6 +8,7 @@ Public pages are route-based under `src/app/(storefront)`:
 
 - `/` home
 - `/our-story`
+- `/cart` (saved local cart builds)
 - `/custom-case` (step 1: base case)
 - `/custom-case/charms` (step 2: charms)
 - `/custom-case/order` (step 3: order info)
@@ -19,6 +20,7 @@ Storefront stack:
 - MUI Material components for interactive UI controls
 - Tailwind utilities for layout and responsive structure
 - Shared storefront flow state via route-group provider
+- Cart persistence in browser `localStorage` for saved custom builds
 
 ## Admin workspace
 
@@ -71,4 +73,3 @@ Main public APIs:
 ## Notes
 
 Detailed architecture notes live in `CODEBASE_STRUCTURE.md`.
-

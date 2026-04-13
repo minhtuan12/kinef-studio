@@ -108,8 +108,8 @@ export function SiteHeader() {
 export function SiteFooter() {
   const links = [
     { href: "/contact", label: "Contact" },
-    { href: "/shipping", label: "Shipping" },
-    { href: "/returns", label: "Returns" },
+    { href: "/#", label: "Shipping" },
+    { href: "/#", label: "Returns" },
     {
       href: "https://instagram.com/kinef.studio",
       label: "Instagram",
