@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Trash2, X } from "lucide-react";
 import { useStorefront } from "../_context/storefront-context";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN");
@@ -56,7 +56,7 @@ export default function CartPage() {
             mb: 1,
           }}
         >
-          Your cart
+          Cart
         </Typography>
         <Typography
           component="p"
@@ -103,7 +103,7 @@ export default function CartPage() {
               mb: 0.5,
             }}
           >
-            Your cart
+            Cart
           </Typography>
           <Typography
             component="p"
@@ -131,9 +131,9 @@ export default function CartPage() {
               px: 2.5,
               height: 36,
             }}
-            className="hover:!bg-black hover:!text-white"
+            className="hover:!bg-black hover:!text-white flex items-center gap-2"
           >
-            Clear cart
+            Clear cart <X size={16} />
           </Button>
         </div>
       </div>
@@ -167,7 +167,6 @@ export default function CartPage() {
                     alt={`${item.caseItem.name} custom case preview`}
                     width={60}
                     height={60}
-                    className="h-auto w-auto"
                     loading="lazy"
                   />
                   <div>

@@ -9,10 +9,8 @@ import {
 } from "@/lib/catalog";
 import { connectToDatabase } from "@/lib/db";
 import { createOrderSchema } from "@/lib/validators";
-import { CharmModel } from "@/models/Charm";
 import { Order } from "@/models/Order";
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
 import { client } from "@/lib/sepay";
 
 function createOrderCode() {
@@ -46,43 +44,6 @@ function resolveStorefrontBaseUrl(request: Request) {
   return new URL(request.url).origin;
 }
 
-async function decrementCharmStocks(charmIds: string[]) {
-  const updatedIds: string[] = [];
-
-  for (const charmId of charmIds) {
-    const updatedCharm = await CharmModel.findOneAndUpdate(
-      {
-        _id: charmId,
-        isActive: true,
-        stock: { $gt: 0 },
-      },
-      { $inc: { stock: -1 } },
-      { new: true },
-    ).lean();
-
-    if (!updatedCharm) {
-      if (updatedIds.length > 0) {
-        await CharmModel.updateMany(
-          { _id: { $in: updatedIds } },
-          { $inc: { stock: 1 } },
-        );
-      }
-
-      return false;
-    }
-
-    updatedIds.push(charmId);
-  }
-
-  return true;
-}
-
-function extractSepayCode(url: string): string | null {
-  const match = url?.match(/[?&]order_id=([^&]+)/);
-  if (match) return match[1];
-  return null;
-}
-
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
@@ -101,10 +62,6 @@ export async function POST(request: Request) {
     await connectToDatabase();
 
     const selectedCase = parsed.data.caseId;
-    // if (!selectedCase || !selectedCase.isActive) {
-    //   return NextResponse.json({ message: "Invalid case option." }, { status: 400 });
-    // }
-
     const selectedCharms = await resolveCharmsByIds(parsed.data.charmIds);
     const missingCharmIds = findMissingCharmIds(parsed.data.charmIds, selectedCharms);
     if (missingCharmIds.length > 0) {
@@ -139,23 +96,6 @@ export async function POST(request: Request) {
     const orderCode = await buildUniqueOrderCode();
     const storefrontBaseUrl = resolveStorefrontBaseUrl(request);
     const confirmationUrl = `${storefrontBaseUrl}/confirmation/${orderCode}`;
-    let decrementedDbCharmIds: string[] = [];
-
-    const dbCharmIds = selectedCharms
-      .filter((item) => item.source === "db" && mongoose.Types.ObjectId.isValid(item.id))
-      .map((item) => item.id);
-
-    if (dbCharmIds.length > 0) {
-      const stocksUpdated = await decrementCharmStocks(dbCharmIds);
-      if (!stocksUpdated) {
-        return NextResponse.json(
-          { message: "One or more selected charms are out of stock." },
-          { status: 409 },
-        );
-      }
-
-      decrementedDbCharmIds = dbCharmIds;
-    }
 
     try {
       await Order.create({
@@ -186,13 +126,6 @@ export async function POST(request: Request) {
         status: "pending",
       });
     } catch (error) {
-      if (decrementedDbCharmIds.length > 0) {
-        await CharmModel.updateMany(
-          { _id: { $in: decrementedDbCharmIds } },
-          { $inc: { stock: 1 } },
-        );
-      }
-
       throw error;
     }
 
@@ -201,17 +134,14 @@ export async function POST(request: Request) {
       operation: "PURCHASE",
       payment_method: 'BANK_TRANSFER',
       order_invoice_number: orderCode,
-      order_amount: total / 2,
+      order_amount: total,
       currency: 'VND',
-      order_description: `Cọc đơn hàng ${orderCode}`,
+      order_description: `Thanh toán đơn hàng ${orderCode}`,
       success_url: confirmationUrl,
       error_url: confirmationUrl,
       cancel_url: confirmationUrl,
       custom_data: orderCode,
     });
-
-    // const paymentCode = extractSepayCode(checkoutURL);
-    // await Order.findOneAndUpdate({ orderCode }, { $set: { paymentCode } });
 
     return NextResponse.json({
       orderCode,

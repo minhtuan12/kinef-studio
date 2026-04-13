@@ -1,5 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
 import { client } from "@/lib/sepay";
+import { CharmModel } from "@/models/Charm";
 import { Order } from "@/models/Order";
 import { NextResponse } from "next/server";
 
@@ -68,7 +69,39 @@ function resolveApiKeyFromAuthorizationHeader(authorizationHeader: string | null
   return match[1]?.trim() ?? null;
 }
 
+async function decrementCharmStocks(charmIds: string[]) {
+  const updatedIds: string[] = [];
+
+  for (const charmId of charmIds) {
+    const updatedCharm = await CharmModel.findOneAndUpdate(
+      {
+        _id: charmId,
+        isActive: true,
+        stock: { $gt: 0 },
+      },
+      { $inc: { stock: -1 } },
+      { new: true },
+    ).lean();
+
+    if (!updatedCharm) {
+      if (updatedIds.length > 0) {
+        await CharmModel.updateMany(
+          { _id: { $in: updatedIds } },
+          { $inc: { stock: 1 } },
+        );
+      }
+
+      return false;
+    }
+
+    updatedIds.push(charmId);
+  }
+
+  return true;
+}
+
 export async function POST(request: Request) {
+  let decrementedDbCharmIds: string[] = [];
   try {
     const expectedApiKey = process.env.SEPAY_WEBHOOK_API_KEY ?? process.env.SEPAY_WEBHOOK_SECRET;
     if (expectedApiKey) {
@@ -110,11 +143,26 @@ export async function POST(request: Request) {
       });
     }
 
-    const halfAmount = Math.ceil(order.total * 0.5);
-
-    order.payment.paidAmount = halfAmount;
-    order.payment.status = "partial";
+    order.payment.paidAmount = payload.transferAmount;
+    if (payload.transferAmount === order.total) {
+      order.payment.status = "paid";
+    } else {
+      order.payment.status = 'partial';
+    }
     order.status = "confirmed";
+
+    const charmIds = order.charms.map((c: any) => c.id);
+    if (charmIds.length > 0) {
+      const stocksUpdated = await decrementCharmStocks(charmIds);
+      if (!stocksUpdated) {
+        return NextResponse.json(
+          { message: "One or more selected charms are out of stock." },
+          { status: 409 },
+        );
+      }
+
+      decrementedDbCharmIds = charmIds;
+    }
 
     await order.save();
 
@@ -125,6 +173,13 @@ export async function POST(request: Request) {
       status: order.status,
     });
   } catch (error) {
+    if (decrementedDbCharmIds.length > 0) {
+      await CharmModel.updateMany(
+        { _id: { $in: decrementedDbCharmIds } },
+        { $inc: { stock: 1 } },
+      );
+    }
+
     const message =
       error instanceof Error ? error.message : "Failed to process SePay webhook.";
     return NextResponse.json({ message }, { status: 500 });

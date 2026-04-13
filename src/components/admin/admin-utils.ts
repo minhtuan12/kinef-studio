@@ -36,7 +36,8 @@ export const ORDER_STATUSES: OrderStatus[] = [
   "cancelled",
 ];
 
-export const PAYMENT_STATUSES: PaymentStatus[] = ["unpaid", "partial", "paid"];
+// export const PAYMENT_STATUSES: PaymentStatus[] = ["unpaid", "partial", "paid"];
+export const PAYMENT_STATUSES: PaymentStatus[] = ["unpaid", "paid"];
 
 export function money(value: number) {
   return `${new Intl.NumberFormat("vi-VN").format(value)} VND`;
@@ -85,8 +86,8 @@ export function orderStatusLabel(value: OrderStatus) {
 export function paymentStatusLabel(value: PaymentStatus) {
   return {
     unpaid: "Unpaid",
-    partial: "Partial (50%)",
-    paid: "Paid (100%)",
+    partial: "Partial",
+    paid: "Paid",
   }[value];
 }
 

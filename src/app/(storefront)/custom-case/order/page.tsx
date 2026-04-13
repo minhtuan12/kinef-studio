@@ -66,7 +66,8 @@ export default function OrderPage() {
   const disablePlaceOrder = !formValues.name?.trim() ||
     !formValues.instagram?.trim() ||
     !formValues.phoneNumber?.trim() ||
-    !formValues.phoneModel?.trim();
+    !formValues.phoneModel?.trim() ||
+    !formValues.address?.trim();
 
   useEffect(() => {
     if (!selectedCase) {
@@ -384,6 +385,7 @@ export default function OrderPage() {
             </Select>
           </FormControl>
           <TextField
+            required
             disabled={isSubmitting}
             label="Address"
             value={formValues.address}
@@ -394,6 +396,7 @@ export default function OrderPage() {
             fullWidth
             multiline
             minRows={2}
+            placeholder="Số nhà, đường, phường/xã, tỉnh/thành phố"
           />
           <TextField
             disabled={isSubmitting}
