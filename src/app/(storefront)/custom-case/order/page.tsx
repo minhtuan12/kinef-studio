@@ -239,6 +239,7 @@ export default function OrderPage() {
                   width={28}
                   height={28}
                   src={charm.imageUrl ?? ""}
+                  loading="lazy"
                 />
                 <Typography fontSize={20} fontWeight={100}>
                   {charm.name}

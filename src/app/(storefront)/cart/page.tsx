@@ -164,10 +164,11 @@ export default function CartPage() {
                 <div className="flex items-center gap-3">
                   <Image
                     src={item.caseItem.imageUrl}
-                    alt={item.caseItem.name}
+                    alt={`${item.caseItem.name} custom case preview`}
                     width={60}
                     height={60}
                     className="h-auto w-auto"
+                    loading="lazy"
                   />
                   <div>
                     <Typography sx={{ fontSize: 20, fontWeight: 300 }}>
@@ -198,6 +199,7 @@ export default function CartPage() {
                               width={22}
                               height={22}
                               className="h-auto w-auto"
+                              loading="lazy"
                             />
                           ) : (
                             <span aria-hidden>{charm.icon}</span>
@@ -286,4 +288,3 @@ export default function CartPage() {
     </main>
   );
 }
-

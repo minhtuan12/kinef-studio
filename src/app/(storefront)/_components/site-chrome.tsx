@@ -76,7 +76,7 @@ export function SiteHeader() {
         >
           <Image
             src={logo}
-            alt="Kinef Logo"
+            alt="Kinef Studio logo"
             className="h-auto w-auto max-w-[188px] max-h-[122px] -mt-1"
             priority
           />

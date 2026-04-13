@@ -113,6 +113,7 @@ export default function SelectCharmPage() {
                   alt={charm.name}
                   fill
                   className="object-scale-down"
+                  loading="lazy"
                 />
               </div>
               <Box sx={{ flex: 1, display: 'flex', justifyContent: 'end', flexDirection: 'column' }}>

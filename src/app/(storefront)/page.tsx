@@ -128,9 +128,9 @@ export default function HomePage() {
           height={799}
           width={599}
           src={banner}
-          alt="Kinef custom phone case hero"
+          alt="Handmade Kinef custom resin phone case with curated charms"
           className="object-cover"
-          preload
+          loading="lazy"
         />
       </section>
 

@@ -65,15 +65,50 @@ export default function OurStoryPage() {
 
         <Box display={'flex'} gap={2.2}>
           <Box display={'flex'} flexDirection={'column'} gap={2.8} alignItems={'end'}>
-            <Image src={story1} quality={100} preload width={311} height={353} className="" alt="Kinef story image 1" />
-            <Image src={story4} quality={100} preload width={263} height={329} className="" alt="Kinef story image 4" />
+            <Image
+              src={story1}
+              width={311}
+              height={353}
+              className=""
+              alt="Handcrafted Kinef resin phone case in a Mediterranean-inspired setup"
+              loading='lazy'
+            />
+            <Image
+              src={story4}
+              width={263}
+              height={329}
+              className=""
+              alt="Kinef handcrafted detail with texture and sea-inspired accents"
+              loading='lazy'
+            />
           </Box>
           <Box display={'flex'} flexDirection={'column'} gap={3.5}>
-            <Image src={story2} quality={100} preload width={328} height={415} className="" alt="Kinef story image 2" />
-            <Image src={story5} quality={100} preload width={329} height={261} className="" alt="Kinef story image 5" />
+            <Image
+              src={story2}
+              width={328}
+              height={415}
+              className=""
+              alt="Kinef Studio handmade piece inspired by coastal Mediterranean colors"
+              loading='lazy'
+            />
+            <Image
+              src={story5}
+              width={329}
+              height={261}
+              className=""
+              alt="Close-up of handcrafted Kinef material and finishing details"
+              loading='lazy'
+            />
           </Box>
         </Box>
-        <Image src={story3} quality={100} preload width={207} height={217} className="absolute bottom-0 left-[calc(100%-840px)]" alt="Kinef story image 3" />
+        <Image
+          src={story3}
+          width={207}
+          height={217}
+          loading='lazy'
+          className="absolute bottom-0 left-[calc(100%-840px)]"
+          alt="Decorative Kinef visual inspired by sea motifs"
+        />
 
         {/* <div className="grid grid-cols-2 gap-4">
           {[story1, story2, story3, story4, story5].map(
