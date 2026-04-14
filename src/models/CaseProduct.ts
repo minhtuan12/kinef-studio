@@ -9,6 +9,11 @@ const caseProductSchema = new Schema(
     imageUrl: { type: String, default: null },
     colorHex: { type: String, default: "#f7f4f0" },
     isActive: { type: Boolean, default: true },
+    height: { type: Number, default: null },
+    width: { type: Number, default: null },
+    source: { type: String, default: "default" },
+    id: { type: String, default: null },
+    swatchClassName: { type: String, default: "" },
   },
   { timestamps: true },
 );

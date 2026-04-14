@@ -80,7 +80,7 @@ export default function SelectCharmPage() {
             fontFamily: "var(--font-serif)",
           }}
         >
-          Each charm is one-of-a-kind. Once claimed, it's gone — the
+          Each charm is one-of-a-kind. Once claimed, it's gone - the
           sold out ones were someone else's
         </Typography>
       </Box>
@@ -113,7 +113,7 @@ export default function SelectCharmPage() {
                   alt={charm.name}
                   fill
                   className="object-scale-down"
-                  loading="lazy"
+                  priority
                 />
               </div>
               <Box sx={{ flex: 1, display: 'flex', justifyContent: 'end', flexDirection: 'column' }}>

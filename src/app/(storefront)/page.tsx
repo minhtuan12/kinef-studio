@@ -36,9 +36,9 @@ export default function HomePage() {
 
   return (
     <main className="mx-auto w-full max-w-[1280px] min-h-[calc(100vh-386px)]">
-      <section className="grid min-h-[799px] max-h-[799px] grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col justify-between border-b border-black/10 px-8 py-32 md:border-b-0 md:border-r md:px-36">
-          <Box display={'flex'} alignItems={'center'} gap={3} justifyContent={'space-between'} mb={3}>
+      <section className="grid xl:min-h-[799px] lg:max-h-[799px] grid-cols-1 md:grid-cols-2">
+        <div className="flex flex-col justify-center xl:justify-between border-b border-black/10 px-8 xl:py-32 md:border-b-0 md:px-20 xl:px-36">
+          <Box display={'flex'} alignItems={'center'} gap={{ lg: 3, md: 2 }} justifyContent={'space-between'} mb={3} flexWrap={'wrap'}>
             <Typography
               variant="body1"
               component="p"
@@ -77,7 +77,7 @@ export default function HomePage() {
             component="h1"
             sx={{
               fontFamily: "var(--font-serif), serif",
-              fontSize: { xs: "58px", md: "100px" },
+              fontSize: { xs: "58px", xl: "100px" },
               lineHeight: 0.95,
               letterSpacing: "0.03em",
               mb: 6,
@@ -86,18 +86,19 @@ export default function HomePage() {
           >
             Custom
             <br />
-            <span style={{ fontStyle: "italic", fontSize: "70px" }}>Phone Cases</span>
+            <span style={{ fontStyle: "italic" }} className="md:text-[40px] xl:text-[70px]">Phone Cases</span>
           </Typography>
           <Box display={'flex'} justifyContent={'center'}>
             <Typography
               component="p"
               sx={{
-                maxWidth: "318px",
+                maxWidth: { xl: "318px" },
                 color: "#838383",
                 fontSize: "15px",
                 lineHeight: "27px",
                 letterSpacing: "0.6%",
                 mb: 10,
+                textAlign: {xs: 'justify', xl: 'left'}
               }}
             >
               Each case is made entirely by hand. You choose the resin base, we help you select

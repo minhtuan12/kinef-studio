@@ -1,6 +1,5 @@
 import { ensureAdminAuthorized } from "@/lib/admin-auth";
 import { connectToDatabase } from "@/lib/db";
-import { normalizeDiscountPercent } from "@/lib/constants";
 import { adminCaseSchema } from "@/lib/validators";
 import { CaseProductModel } from "@/models/CaseProduct";
 import { NextResponse } from "next/server";
@@ -40,11 +39,11 @@ export async function PUT(
       id,
       {
         name: parsed.data.name,
-        description: parsed.data.description,
+        // description: parsed.data.description,
         price: parsed.data.price,
-        discountPercent: normalizeDiscountPercent(parsed.data.discountPercent),
-        imageUrl: parsed.data.imageUrl ?? null,
-        colorHex: parsed.data.colorHex,
+        // discountPercent: normalizeDiscountPercent(parsed.data.discountPercent),
+        // imageUrl: parsed.data.imageUrl ?? null,
+        // colorHex: parsed.data.colorHex,
         isActive: parsed.data.isActive,
       },
       { new: true },
@@ -73,31 +72,31 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  context: { params: Promise<{ id: string }> },
-) {
-  const denied = ensureAdminAuthorized(request);
-  if (denied) {
-    return denied;
-  }
+// export async function DELETE(
+//   request: Request,
+//   context: { params: Promise<{ id: string }> },
+// ) {
+//   const denied = ensureAdminAuthorized(request);
+//   if (denied) {
+//     return denied;
+//   }
 
-  const { id } = await context.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return invalidIdResponse();
-  }
+//   const { id } = await context.params;
+//   if (!mongoose.Types.ObjectId.isValid(id)) {
+//     return invalidIdResponse();
+//   }
 
-  try {
-    await connectToDatabase();
-    const deleted = await CaseProductModel.findByIdAndDelete(id).lean();
+//   try {
+//     await connectToDatabase();
+//     const deleted = await CaseProductModel.findByIdAndDelete(id).lean();
 
-    if (!deleted) {
-      return NextResponse.json({ message: "Case not found." }, { status: 404 });
-    }
+//     if (!deleted) {
+//       return NextResponse.json({ message: "Case not found." }, { status: 404 });
+//     }
 
-    return NextResponse.json({ message: "Case deleted." });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to delete case.";
-    return NextResponse.json({ message }, { status: 500 });
-  }
-}
+//     return NextResponse.json({ message: "Case deleted." });
+//   } catch (error) {
+//     const message = error instanceof Error ? error.message : "Failed to delete case.";
+//     return NextResponse.json({ message }, { status: 500 });
+//   }
+// }

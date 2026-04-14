@@ -619,7 +619,7 @@ body {
 }
 
 .tablePrimary {
-    width: 'fit-content',
+    width: "fit-content";
 }
 
 .featureGrid {
@@ -764,7 +764,7 @@ body {
 }
 
 .previewImage {
-    height: 72px;
+    height: auto;
 }
 
 .previewSwatch,
@@ -1234,7 +1234,7 @@ Button:disabled,
 .managementCardGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .managementCard {

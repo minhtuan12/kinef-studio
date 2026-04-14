@@ -1,5 +1,4 @@
 ﻿import {
-  CASE_PRICE,
   MAX_CHARMS_PER_ORDER,
   type CharmProduct,
 } from "@/lib/constants";
@@ -10,6 +9,7 @@ import {
 import { connectToDatabase } from "@/lib/db";
 import { createOrderSchema } from "@/lib/validators";
 import { Order } from "@/models/Order";
+import { CaseProductModel } from "@/models/CaseProduct";
 import { NextResponse } from "next/server";
 import { client } from "@/lib/sepay";
 
@@ -86,7 +86,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const caseTotal = CASE_PRICE;
+    const sCase = await CaseProductModel.findOne({ id: selectedCase });
+    const caseTotal = sCase.price;
     const charmTotal = selectedCharms.reduce(
       (sum, charm) => sum + getFinalCharmPrice(charm),
       0,

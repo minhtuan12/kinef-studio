@@ -1,6 +1,6 @@
 import { ensureAdminAuthorized } from "@/lib/admin-auth";
-import { CASE_PRICE } from "@/lib/constants";
 import { connectToDatabase } from "@/lib/db";
+import { CaseProductModel } from "@/models/CaseProduct";
 import { Order } from "@/models/Order";
 import { NextResponse } from "next/server";
 import * as XLSX from "xlsx";
@@ -14,6 +14,17 @@ export async function GET(request: Request) {
   try {
     await connectToDatabase();
     const orders = await Order.find().sort({ createdAt: -1 }).lean();
+    const cases = await CaseProductModel.find().lean();
+    let casePrices: Record<string, { name: string; price: number }> = {};
+    cases.forEach((c) => {
+      casePrices = {
+        ...casePrices,
+        [c.id]: {
+          name: c.name,
+          price: c.price,
+        },
+      };
+    });
 
     const rows = orders.map((order) => ({
       OrderCode: order.orderCode,
@@ -21,8 +32,8 @@ export async function GET(request: Request) {
       Instagram: order.customer?.instagram ?? "",
       PhoneNumber: order.customer?.phoneNumber ?? "",
       PhoneModel: order.customer?.phoneModel ?? "",
-      CaseName: order.caseItem ?? "",
-      CasePrice: CASE_PRICE,
+      CaseName: casePrices[order.caseItem].name ?? "",
+      CasePrice: casePrices[order.caseItem].price ?? 0,
       CharmCount: order.charms?.length ?? 0,
       CharmTotal: order.charmTotal,
       Total: order.total,

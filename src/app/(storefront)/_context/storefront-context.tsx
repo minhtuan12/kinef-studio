@@ -2,8 +2,6 @@
 
 import {
   calculateDiscountedPrice,
-  DEFAULT_CASES,
-  DEFAULT_CHARMS,
   MAX_CHARMS_PER_ORDER,
   type CaseProduct,
   type CharmProduct,
@@ -53,6 +51,7 @@ type StorefrontContextValue = {
   cartCount: number;
   cartItems: CartItem[];
   setSelectedCase: (next: CaseProduct | null) => void;
+  setSelectedCharms: (next: CharmProduct[]) => void;
   toggleCharm: (charm: CharmProduct) => void;
   removeCharm: (charmId: string) => void;
   setOrderFormField: (key: keyof OrderForm, value: string) => void;
@@ -88,13 +87,9 @@ function getRandomId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function resolveCaseImage(image: CaseProduct["imageUrl"]): string {
-  return typeof image === "string" ? image : image.src;
-}
-
 export function StorefrontProvider({ children }: { children: React.ReactNode }) {
-  const [cases, setCases] = useState<CaseProduct[]>(DEFAULT_CASES);
-  const [charms, setCharms] = useState<CharmProduct[]>(DEFAULT_CHARMS);
+  const [cases, setCases] = useState<CaseProduct[]>([]);
+  const [charms, setCharms] = useState<CharmProduct[]>([]);
   const [selectedCase, setSelectedCase] = useState<CaseProduct | null>(null);
   const [selectedCharms, setSelectedCharms] = useState<CharmProduct[]>([]);
   const [orderForm, setOrderForm] = useState<OrderForm>(initialOrderForm);
@@ -107,8 +102,8 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
     const loadCatalog = async () => {
       try {
         setIsCatalogLoading(true);
-        const [charmResponse] = await Promise.all([
-          // fetch("/api/cases", { cache: "no-store" }),
+        const [caseResponse, charmResponse] = await Promise.all([
+          fetch("/api/cases", { cache: "no-store" }),
           fetch("/api/charms", { cache: "no-store" }),
         ]);
 
@@ -116,19 +111,21 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
           throw new Error("Unable to load catalog.");
         }
 
-        // const caseData = (await caseResponse.json()) as { cases?: CaseProduct[] };
+        const caseData = (await caseResponse.json()) as { cases?: CaseProduct[] };
         const charmData = (await charmResponse.json()) as { charms?: CharmProduct[] };
 
-        setCases(DEFAULT_CASES);
+        setCases(Array.isArray(caseData.cases) && caseData.cases.length > 0
+          ? caseData.cases
+          : [],);
         setCharms(
           Array.isArray(charmData.charms) && charmData.charms.length > 0
             ? charmData.charms
-            : DEFAULT_CHARMS,
+            : [],
         );
         setDataLoadError(null);
       } catch {
-        setCases(DEFAULT_CASES);
-        setCharms(DEFAULT_CHARMS);
+        setCases([]);
+        setCharms([]);
         setDataLoadError(
           "Using local catalog data right now. Backend catalog APIs are unavailable.",
         );
@@ -225,7 +222,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
         caseItem: {
           id: selectedCase.id,
           name: selectedCase.name,
-          imageUrl: resolveCaseImage(selectedCase.imageUrl),
+          imageUrl: selectedCase.imageUrl,
           unitPrice: calculateDiscountedPrice(
             selectedCase.price,
             selectedCase.discountPercent,
@@ -310,6 +307,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
       cartCount,
       cartItems,
       setSelectedCase,
+      setSelectedCharms,
       toggleCharm,
       removeCharm,
       setOrderFormField,

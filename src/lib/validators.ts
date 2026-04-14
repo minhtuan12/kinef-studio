@@ -7,7 +7,6 @@ export const createOrderSchema = z.object({
   charmIds: z
     .array(z.string().min(1))
     .min(0)
-    .max(6)
     .refine((value) => new Set(value).size === value.length, {
       message: "Duplicate charm ids are not allowed.",
     }),

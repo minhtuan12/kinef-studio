@@ -1,17 +1,13 @@
-﻿import blackCase from '@/assets/images/black-case.svg';
-import whiteCase from '@/assets/images/white-case.svg';
-import clearCase from '@/assets/images/clear-case.svg';
-import { StaticImageData } from 'next/image';
-
-export type CatalogSource = "default" | "db";
+﻿export type CatalogSource = "default" | "db";
 
 export type CaseProduct = {
+  _id: string;
   id: string;
   name: string;
   description: string;
   price: number;
   discountPercent: number;
-  imageUrl: StaticImageData;
+  imageUrl: string;
   colorHex: string;
   swatchClassName?: string;
   isActive: boolean;
@@ -32,187 +28,7 @@ export type CharmProduct = {
   source: CatalogSource;
 };
 
-export const MAX_CHARMS_PER_ORDER = 6;
-
-export const DEFAULT_CASES: CaseProduct[] = [
-  {
-    id: "case-white",
-    name: "White",
-    description: "Cream opaque, soft finish",
-    price: 120000,
-    discountPercent: 0,
-    imageUrl: whiteCase,
-    colorHex: "#f7f4f0",
-    swatchClassName: "sw-white",
-    isActive: true,
-    source: "default",
-    width: 231,
-    height: 437,
-  },
-  {
-    id: "case-black",
-    name: "Black",
-    description: "Deep matte, dramatic",
-    price: 120000,
-    discountPercent: 0,
-    imageUrl: blackCase,
-    colorHex: "#161412",
-    swatchClassName: "sw-black",
-    isActive: true,
-    source: "default",
-    width: 270,
-    height: 445,
-  },
-  {
-    id: "case-clear",
-    name: "Clear",
-    description: "Original case shows through",
-    price: 120000,
-    discountPercent: 0,
-    imageUrl: clearCase,
-    colorHex: "transparent",
-    swatchClassName: "sw-clear",
-    isActive: true,
-    source: "default",
-    width: 251,
-    height: 427,
-  },
-];
-
-export const DEFAULT_CHARMS: CharmProduct[] = [
-  {
-    id: "charm-1",
-    name: "Butterfly",
-    icon: "🦋",
-    price: 35000,
-    discountPercent: 0,
-    stock: 2,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-2",
-    name: "Star Cluster",
-    icon: "✦",
-    price: 28000,
-    discountPercent: 0,
-    stock: 0,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-3",
-    name: "Moon Pearl",
-    icon: "🌙",
-    price: 32000,
-    discountPercent: 0,
-    stock: 1,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-4",
-    name: "Mushroom",
-    icon: "🍄",
-    price: 30000,
-    discountPercent: 0,
-    stock: 2,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-5",
-    name: "Silk Bow",
-    icon: "🎀",
-    price: 25000,
-    discountPercent: 0,
-    stock: 1,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-6",
-    name: "Evil Eye",
-    icon: "◉",
-    price: 38000,
-    discountPercent: 0,
-    stock: 0,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-7",
-    name: "White Pearl",
-    icon: "●",
-    price: 22000,
-    discountPercent: 0,
-    stock: 2,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-8",
-    name: "Mini Bear",
-    icon: "🐻",
-    price: 35000,
-    discountPercent: 0,
-    stock: 1,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-9",
-    name: "Crystal Heart",
-    icon: "♡",
-    price: 40000,
-    discountPercent: 0,
-    stock: 2,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-10",
-    name: "Gold Snake",
-    icon: "⊛",
-    price: 45000,
-    discountPercent: 0,
-    stock: 0,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-11",
-    name: "Cherry",
-    icon: "🍒",
-    price: 28000,
-    discountPercent: 0,
-    stock: 2,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-  {
-    id: "charm-12",
-    name: "Lucky Clover",
-    icon: "☘",
-    price: 25000,
-    discountPercent: 0,
-    stock: 1,
-    imageUrl: null,
-    isActive: true,
-    source: "default",
-  },
-];
+export const MAX_CHARMS_PER_ORDER = 100;
 
 export function normalizeDiscountPercent(discountPercent: number): number {
   if (Number.isNaN(discountPercent)) {
@@ -227,8 +43,6 @@ export function calculateDiscountedPrice(price: number, discountPercent: number)
   const safeDiscount = normalizeDiscountPercent(discountPercent);
   return Math.round(safePrice * (100 - safeDiscount) / 100);
 }
-
-export const CASE_PRICE = 120000;
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN");
 export function formatVnd(amount: number) {

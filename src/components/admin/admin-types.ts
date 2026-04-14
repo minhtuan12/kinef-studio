@@ -15,6 +15,7 @@ export type OrderStatus =
 export type PaymentStatus = "unpaid" | "partial" | "paid";
 
 export type AdminCase = {
+  _id: string;
   id: string;
   name: string;
   description: string;

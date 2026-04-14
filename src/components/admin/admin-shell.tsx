@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ArrowLeft,
+  Boxes,
   Home,
   Loader2,
   LogOut,
@@ -28,11 +29,11 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
   {
     label: "Catalog",
     items: [
-      // {
-      //   href: "/admin/cases",
-      //   label: "Quản lý Cases",
-      //   icon: Boxes,
-      // },
+      {
+        href: "/admin/cases",
+        label: "Case Management",
+        icon: Boxes,
+      },
       {
         href: "/admin/charms",
         label: "Charm Management",
@@ -54,7 +55,7 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
 
 const PAGE_META: Record<string, { title: string }> = {
   "/admin": { title: "Dashboard" },
-  // "/admin/cases": { title: "Quản lý Cases" },
+  "/admin/cases": { title: "Case Management" },
   "/admin/charms": { title: "Charm Management" },
   "/admin/orders": { title: "Order Management" },
 };

@@ -1,8 +1,9 @@
 "use client";
 
-import { Alert, Box, Card, CardContent, Typography } from "@mui/material";
+import { Alert, Box, Card, CardContent, Skeleton, Typography } from "@mui/material";
 import { useStorefront } from "../_context/storefront-context";
 import Image from "next/image";
+import { Loader2 } from "lucide-react";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN");
 
@@ -38,13 +39,6 @@ export default function CustomCasePage() {
       </Typography>
 
       {
-        isCatalogLoading ? (
-          <Alert severity="info" sx={{ mt: 3 }}>
-            Loading latest catalog...
-          </Alert>
-        ) : null
-      }
-      {
         dataLoadError ? (
           <Alert severity="warning" sx={{ mt: 3 }}>
             {dataLoadError}
@@ -53,25 +47,27 @@ export default function CustomCasePage() {
       }
 
       <section className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-        {cases.map((item, index) => {
-          const isSelected = selectedCase?.id === item.id;
-          const finalPrice = Math.round(
+        {(isCatalogLoading ? Array.from(new Array(3)) : cases).map((item, index) => {
+          const isSelected = selectedCase?.id === item?.id;
+          const finalPrice = !isCatalogLoading ? Math.round(
             (item.price * (100 - item.discountPercent)) / 100,
-          );
+          ) : 0;
 
           return (
             <Card
-              key={item.id}
+              key={index}
               sx={{
-                border: "1px solid",
-                borderColor: isSelected
-                  ? "#1a1816"
-                  : "rgba(0,0,0,0.22)",
+                ...(!isCatalogLoading && {
+                  border: "1px solid",
+                  borderColor: isSelected
+                    ? "#1a1816"
+                    : "rgba(0,0,0,0.22)",
+                  bgcolor: isSelected ? "rgba(225, 220, 220, 0.22)" : "#fffdfa",
+                }),
                 boxShadow: "none",
-                bgcolor: isSelected ? "rgba(225, 220, 220, 0.22)" : "#fffdfa",
               }}
             >
-              <button
+              {isCatalogLoading ? <Skeleton key={index} animation="wave" variant="rounded" className="w-full !h-[550]" /> : <button
                 type="button"
                 className="w-full cursor-pointer bg-transparent text-left h-full"
                 onClick={() => setSelectedCase(item)}
@@ -102,6 +98,7 @@ export default function CustomCasePage() {
                   </Typography>
                 </CardContent>
               </button>
+              }
             </Card>
           );
         })}

@@ -28,11 +28,6 @@ export default function CartPage() {
   } = useStorefront();
   const [actionError, setActionError] = useState<string | null>(null);
 
-  const grandTotal = useMemo(
-    () => cartItems.reduce((sum, item) => sum + item.totalPrice, 0),
-    [cartItems],
-  );
-
   const continueToOrderStep = (itemId: string) => {
     setActionError(null);
     const hydrated = hydrateBuilderFromCartItem(itemId);
@@ -43,6 +38,18 @@ export default function CartPage() {
       return;
     }
     router.push("/custom-case/order");
+  };
+
+  const buildAnotherFromItem = (itemId: string) => {
+    setActionError(null);
+    const hydrated = hydrateBuilderFromCartItem(itemId);
+    if (!hydrated) {
+      setActionError(
+        "This cart item can no longer be restored because product data changed.",
+      );
+      return;
+    }
+    router.push("/custom-case/charms");
   };
 
   if (cartItems.length === 0) {
@@ -242,10 +249,27 @@ export default function CartPage() {
             </div>
 
             <div className="mt-5 flex flex-col gap-3 border-t border-black/10 pt-4 md:flex-row md:items-center md:justify-between">
-              <Link href="/custom-case" className="inline-flex items-center gap-1 text-[15px]">
+              <Button
+                type="button"
+                variant="text"
+                onClick={() => buildAnotherFromItem(item.id)}
+                sx={{
+                  color: "#1a1816",
+                  textTransform: "none",
+                  justifyContent: "flex-start",
+                  minWidth: 0,
+                  px: 0,
+                  py: 0,
+                  "&:hover": {
+                    backgroundColor: "transparent",
+                    textDecoration: "underline",
+                  },
+                }}
+                className="inline-flex items-center gap-1"
+              >
                 <ArrowLeft size={13} />
                 Build another
-              </Link>
+              </Button>
               <div className="flex flex-col items-stretch gap-3 md:flex-row">
                 <Button
                   type="button"

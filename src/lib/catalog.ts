@@ -1,11 +1,13 @@
 ﻿import {
   calculateDiscountedPrice,
-  DEFAULT_CHARMS,
+  CatalogSource,
   type CaseProduct,
   type CharmProduct,
 } from "@/lib/constants";
+import { CaseProductModel } from "@/models/CaseProduct";
 import { CharmModel } from "@/models/Charm";
 import mongoose from "mongoose";
+import { StaticImageData } from "next/image";
 
 type IdLike = string | mongoose.Types.ObjectId;
 
@@ -32,6 +34,39 @@ function mapCharmDocument(doc: {
   };
 }
 
+
+function mapCaseDocument(doc: {
+  _id: IdLike;
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  discountPercent: number;
+  imageUrl: string;
+  colorHex: string;
+  swatchClassName?: string;
+  isActive: boolean;
+  source: CatalogSource;
+  width: number;
+  height: number;
+}): CaseProduct {
+  return {
+    _id: String(doc._id),
+    id: doc.id,
+    name: doc.name,
+    description: doc.description,
+    price: doc.price,
+    discountPercent: doc.discountPercent,
+    imageUrl: doc.imageUrl,
+    colorHex: doc.colorHex,
+    swatchClassName: doc.swatchClassName,
+    isActive: doc.isActive,
+    source: doc.source,
+    width: doc.width,
+    height: doc.height,
+  };
+}
+
 export function getFinalCasePrice(item: CaseProduct): number {
   return calculateDiscountedPrice(item.price, item.discountPercent);
 }
@@ -43,10 +78,19 @@ export function getFinalCharmPrice(item: CharmProduct): number {
 export async function listStoreCharms(): Promise<CharmProduct[]> {
   const docs = await CharmModel.find({ isActive: true }).sort({ createdAt: -1 }).lean();
   if (docs.length === 0) {
-    return DEFAULT_CHARMS;
+    return [];
   }
 
   return docs.map((doc) => mapCharmDocument(doc));
+}
+
+export async function listStoreCases(): Promise<CaseProduct[]> {
+  const docs = await CaseProductModel.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+  if (docs.length === 0) {
+    return [];
+  }
+
+  return docs.map((doc) => mapCaseDocument(doc));
 }
 
 export async function resolveCharmsByIds(charmIds: string[]): Promise<CharmProduct[]> {
@@ -57,7 +101,6 @@ export async function resolveCharmsByIds(charmIds: string[]): Promise<CharmProdu
       : [];
 
   const dbMap = new Map(dbDocs.map((doc) => [String(doc._id), mapCharmDocument(doc)]));
-  const defaultMap = new Map(DEFAULT_CHARMS.map((item) => [item.id, item]));
 
   const resolved: CharmProduct[] = [];
   for (const id of charmIds) {
@@ -65,11 +108,6 @@ export async function resolveCharmsByIds(charmIds: string[]): Promise<CharmProdu
     if (fromDb) {
       resolved.push(fromDb);
       continue;
-    }
-
-    const fallback = defaultMap.get(id);
-    if (fallback) {
-      resolved.push(fallback);
     }
   }
 

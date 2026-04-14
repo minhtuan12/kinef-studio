@@ -1,7 +1,5 @@
 import { ensureAdminAuthorized } from "@/lib/admin-auth";
 import { connectToDatabase } from "@/lib/db";
-import { normalizeDiscountPercent } from "@/lib/constants";
-import { adminCaseSchema } from "@/lib/validators";
 import { CaseProductModel } from "@/models/CaseProduct";
 import { NextResponse } from "next/server";
 
@@ -16,7 +14,7 @@ export async function GET(request: Request) {
     const items = await CaseProductModel.find().sort({ createdAt: -1 }).lean();
     return NextResponse.json({
       items: items.map((item) => ({
-        id: String(item._id),
+        _id: String(item._id),
         name: item.name,
         description: item.description,
         price: item.price,
@@ -24,6 +22,11 @@ export async function GET(request: Request) {
         imageUrl: item.imageUrl ?? null,
         colorHex: item.colorHex ?? "#f7f4f0",
         isActive: item.isActive,
+        height: item.height,
+        width: item.width,
+        source: item.source,
+        id: item.id,
+        swatchClassName: item.swatchClassName,
       })),
     });
   } catch {
@@ -31,52 +34,52 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
-  const denied = ensureAdminAuthorized(request);
-  if (denied) {
-    return denied;
-  }
+// export async function POST(request: Request) {
+//   const denied = ensureAdminAuthorized(request);
+//   if (denied) {
+//     return denied;
+//   }
 
-  try {
-    const payload = await request.json();
-    const parsed = adminCaseSchema.safeParse(payload);
+//   try {
+//     const payload = await request.json();
+//     const parsed = adminCaseSchema.safeParse(payload);
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { message: "Invalid case payload.", details: parsed.error.flatten() },
-        { status: 400 },
-      );
-    }
+//     if (!parsed.success) {
+//       return NextResponse.json(
+//         { message: "Invalid case payload.", details: parsed.error.flatten() },
+//         { status: 400 },
+//       );
+//     }
 
-    await connectToDatabase();
-    const created = await CaseProductModel.create({
-      name: parsed.data.name,
-      description: parsed.data.description,
-      price: parsed.data.price,
-      discountPercent: normalizeDiscountPercent(parsed.data.discountPercent),
-      imageUrl: parsed.data.imageUrl ?? null,
-      colorHex: parsed.data.colorHex,
-      isActive: parsed.data.isActive,
-    });
+//     await connectToDatabase();
+//     const created = await CaseProductModel.create({
+//       name: parsed.data.name,
+//       description: parsed.data.description,
+//       price: parsed.data.price,
+//       discountPercent: normalizeDiscountPercent(parsed.data.discountPercent),
+//       imageUrl: parsed.data.imageUrl ?? null,
+//       colorHex: parsed.data.colorHex,
+//       isActive: parsed.data.isActive,
+//     });
 
-    return NextResponse.json(
-      {
-        message: "Case created.",
-        item: {
-          id: String(created._id),
-          name: created.name,
-          description: created.description,
-          price: created.price,
-          discountPercent: created.discountPercent,
-          imageUrl: created.imageUrl,
-          colorHex: created.colorHex,
-          isActive: created.isActive,
-        },
-      },
-      { status: 201 },
-    );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to create case.";
-    return NextResponse.json({ message }, { status: 500 });
-  }
-}
+//     return NextResponse.json(
+//       {
+//         message: "Case created.",
+//         item: {
+//           id: String(created._id),
+//           name: created.name,
+//           description: created.description,
+//           price: created.price,
+//           discountPercent: created.discountPercent,
+//           imageUrl: created.imageUrl,
+//           colorHex: created.colorHex,
+//           isActive: created.isActive,
+//         },
+//       },
+//       { status: 201 },
+//     );
+//   } catch (error) {
+//     const message = error instanceof Error ? error.message : "Failed to create case.";
+//     return NextResponse.json({ message }, { status: 500 });
+//   }
+// }

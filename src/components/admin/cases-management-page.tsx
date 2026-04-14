@@ -2,23 +2,19 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { Card, Checkbox, ConfigProvider, Empty, Modal, Popconfirm } from "antd";
+import { Card, ConfigProvider, Empty, Modal } from "antd";
 import {
   ImageIcon,
   Loader2,
   Pencil,
-  Plus,
   RefreshCcw,
   Save,
-  Trash2,
-  Upload,
 } from "lucide-react";
 import {
   useCallback,
   useEffect,
   useMemo,
   useState,
-  type ChangeEvent,
   type FormEvent,
 } from "react";
 import { useAdminContext } from "./admin-context";
@@ -49,7 +45,7 @@ function toCaseForm(item: AdminCase): CaseForm {
 }
 
 export default function CasesManagementPage() {
-  const { hasAdminKey, notify, req, upload } = useAdminContext();
+  const { hasAdminKey, notify, req, messageApi } = useAdminContext();
   const [items, setItems] = useState<AdminCase[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -122,7 +118,7 @@ export default function CasesManagementPage() {
   }, [resetForm]);
 
   const openUpdateEditor = useCallback((item: AdminCase) => {
-    setEditingId(item.id);
+    setEditingId(item._id);
     setForm(toCaseForm(item));
     setFile(null);
     setIsEditorOpen(true);
@@ -133,7 +129,7 @@ export default function CasesManagementPage() {
 
   const toggleCaseStatus = useCallback(
     async (item: AdminCase, checked: boolean) => {
-      await req(`/api/admin/cases/${item.id}`, {
+      await req(`/api/admin/cases/${item._id}`, {
         method: "PUT",
         body: JSON.stringify({
           ...item,
@@ -171,16 +167,16 @@ export default function CasesManagementPage() {
 
     setSaving(true);
     try {
-      let imageUrl = form.imageUrl || null;
-      if (file) {
-        imageUrl = await upload(file, "kinef/catalog/cases");
-      }
+      // let imageUrl = form.imageUrl || null;
+      // if (file) {
+      //   imageUrl = await upload(file, "kinef/catalog/cases");
+      // }
 
       const payload = {
-        ...form,
+        name: form.name,
         price: Number(form.price),
-        discountPercent: Number(form.discountPercent),
-        imageUrl,
+        // discountPercent: Number(form.discountPercent),
+        // imageUrl,
       };
 
       if (editingId) {
@@ -188,21 +184,20 @@ export default function CasesManagementPage() {
           method: "PUT",
           body: JSON.stringify(payload),
         });
-        notify("success", "Case updated.");
+        messageApi.success("Successful");
       } else {
-        await req("/api/admin/cases", {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
-        notify("success", "Case created.");
+        // await req("/api/admin/cases", {
+        //   method: "POST",
+        //   body: JSON.stringify(payload),
+        // });
+        // notify("success", "Case created.");
       }
 
       setIsEditorOpen(false);
       resetForm();
       await loadCases();
     } catch (error) {
-      notify(
-        "error",
+      messageApi.error(
         error instanceof Error ? error.message : "Failed to save case.",
       );
     } finally {
@@ -210,34 +205,34 @@ export default function CasesManagementPage() {
     }
   };
 
-  const removeCase = useCallback(
-    async (id: string) => {
-      setSaving(true);
-      try {
-        await req(`/api/admin/cases/${id}`, { method: "DELETE" });
-        notify("success", "Case deleted.");
-        if (editingId === id) {
-          setIsEditorOpen(false);
-          resetForm();
-        }
-        await loadCases();
-      } catch (error) {
-        notify(
-          "error",
-          error instanceof Error
-            ? error.message
-            : "Failed to delete case.",
-        );
-      } finally {
-        setSaving(false);
-      }
-    },
-    [editingId, loadCases, notify, req, resetForm],
-  );
+  // const removeCase = useCallback(
+  //   async (id: string) => {
+  //     setSaving(true);
+  //     try {
+  //       await req(`/api/admin/cases/${id}`, { method: "DELETE" });
+  //       notify("success", "Case deleted.");
+  //       if (editingId === id) {
+  //         setIsEditorOpen(false);
+  //         resetForm();
+  //       }
+  //       await loadCases();
+  //     } catch (error) {
+  //       notify(
+  //         "error",
+  //         error instanceof Error
+  //           ? error.message
+  //           : "Failed to delete case.",
+  //       );
+  //     } finally {
+  //       setSaving(false);
+  //     }
+  //   },
+  //   [editingId, loadCases, notify, req, resetForm],
+  // );
 
-  const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFile(event.target.files?.[0] ?? null);
-  };
+  // const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setFile(event.target.files?.[0] ?? null);
+  // };
 
   const previewFinalPrice = Math.max(
     0,
@@ -261,7 +256,7 @@ export default function CasesManagementPage() {
       <>
         <AdminPageSection
           eyebrow="Catalog"
-          title="Quản lý Cases"
+          title="Case Management"
           actions={
             <div className={styles.inlineActions}>
               <button
@@ -275,7 +270,7 @@ export default function CasesManagementPage() {
                   {loading ? "Refreshing" : "Refresh"}
                 </span>
               </button>
-              <button
+              {/* <button
                 type="button"
                 className={styles.primaryAction}
                 onClick={openCreateEditor}
@@ -283,7 +278,7 @@ export default function CasesManagementPage() {
               >
                 <Plus size={15} />
                 <span>Add new</span>
-              </button>
+              </button> */}
             </div>
           }
         />
@@ -299,7 +294,7 @@ export default function CasesManagementPage() {
                 onChange={(event) =>
                   setSearch(event.target.value)
                 }
-                placeholder="Search cases by name or description"
+                placeholder="Search cases by name"
               />
               <div className={styles.filterRow}>
                 {(
@@ -307,7 +302,6 @@ export default function CasesManagementPage() {
                     "all",
                     "active",
                     "inactive",
-                    "discounted",
                   ] as FilterMode[]
                 ).map((value) => (
                   <button
@@ -355,7 +349,11 @@ export default function CasesManagementPage() {
                         />
                       ) : item.colorHex ? (
                         <div
-                          style={{ background: item.colorHex, height: '100%' }}
+                          style={{
+                            background:
+                              item.colorHex,
+                            height: "100%",
+                          }}
                         />
                       ) : (
                         <div
@@ -389,13 +387,6 @@ export default function CasesManagementPage() {
                           }
                         >
                           {item.name}
-                        </div>
-                        <div
-                          className={
-                            styles.charmSpotlightDesc
-                          }
-                        >
-                          {item.description}
                         </div>
                         <div
                           className={
@@ -434,25 +425,23 @@ export default function CasesManagementPage() {
                         </div>
                       </div>
 
-                      <div className={styles.rowActions}>
-                        <button
-                          type="button"
-                          className={
-                            styles.tableAction
-                          }
-                          style={{
-                            background:
-                              "rgba(21, 31, 56, 0.92)",
-                            color: "white",
-                          }}
-                          onClick={() =>
-                            openUpdateEditor(item)
-                          }
-                        >
-                          <Pencil size={14} />
-                          <span>Cập nhật</span>
-                        </button>
-                        <Popconfirm
+                      <button
+                        type="button"
+                        className={styles.tableAction}
+                        style={{
+                          background:
+                            "rgba(21, 31, 56, 0.92)",
+                          color: "white",
+                          width: "100%",
+                        }}
+                        onClick={() =>
+                          openUpdateEditor(item)
+                        }
+                      >
+                        <Pencil size={14} />
+                        <span>Update</span>
+                      </button>
+                      {/* <Popconfirm
                           title="Xóa case"
                           onConfirm={() =>
                             removeCase(item.id)
@@ -467,8 +456,7 @@ export default function CasesManagementPage() {
                             <Trash2 size={14} />
                             <span>Xóa</span>
                           </button>
-                        </Popconfirm>
-                      </div>
+                        </Popconfirm> */}
                     </div>
                   </Card>
                 ))}
@@ -495,7 +483,7 @@ export default function CasesManagementPage() {
           title={
             <div className={styles.modalTitleWrap}>
               <span>
-                {editingId ? "Cập nhật case" : "Tạo case"}
+                {editingId ? "Update case" : "Create case"}
               </span>
             </div>
           }
@@ -545,7 +533,7 @@ export default function CasesManagementPage() {
               />
             </label>
 
-            <label className={styles.field}>
+            {/* <label className={styles.field}>
               <span>Description</span>
               <textarea
                 value={form.description}
@@ -557,11 +545,11 @@ export default function CasesManagementPage() {
                 }
                 rows={4}
               />
-            </label>
+            </label> */}
 
             <div className={styles.fieldRow}>
               <label className={styles.field}>
-                <span>Base price</span>
+                <span>Price</span>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -577,7 +565,7 @@ export default function CasesManagementPage() {
                   required
                 />
               </label>
-              <label className={styles.field}>
+              {/* <label className={styles.field}>
                 <span>Discount %</span>
                 <input
                   type="number"
@@ -592,10 +580,22 @@ export default function CasesManagementPage() {
                   }
                   required
                 />
+              </label> */}
+              <label className={styles.switchField}>
+                <span>Storefront status</span>
+                <Switch
+                  checked={Boolean(form.isActive)}
+                  onChange={(_event, checked) =>
+                    setForm((current) => ({
+                      ...current,
+                      isActive: checked,
+                    }))
+                  }
+                />
               </label>
             </div>
 
-            <div className={styles.fieldRow}>
+            {/* <div className={styles.fieldRow}>
               <label className={styles.field}>
                 <div className="flex justify-between items-center">
                   Color
@@ -627,19 +627,7 @@ export default function CasesManagementPage() {
                   />
                 )}
               </label>
-              <label className={styles.switchField}>
-                <span>Storefront status</span>
-                <Switch
-                  checked={Boolean(form.isActive)}
-                  onChange={(_event, checked) =>
-                    setForm((current) => ({
-                      ...current,
-                      isActive: checked,
-                    }))
-                  }
-                />
-              </label>
-            </div>
+            </div> */}
 
             {/* <label className={styles.uploadField}>
               <span>
@@ -661,10 +649,12 @@ export default function CasesManagementPage() {
                 className={styles.primaryAction}
                 disabled={saving || !hasAdminKey}
               >
-                <Save size={15} />
-                <span>
-                  Lưu
-                </span>
+                {saving ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Save size={15} />
+                )}
+                <span>Save</span>
               </button>
               <button
                 type="button"
