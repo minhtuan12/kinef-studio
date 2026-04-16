@@ -260,9 +260,9 @@ export function CartContent() {
                             <Image
                               src={charm.imageUrl}
                               alt={charm.name}
-                              width={22}
-                              height={22}
-                              className="h-auto w-auto"
+                              width={24}
+                              height={24}
+                              className="max-w-[24px] max-h-[24px]"
                               loading="lazy"
                             />
                           ) : (

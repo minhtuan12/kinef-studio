@@ -237,10 +237,11 @@ export default function OrderPage() {
               <Box display={"flex"} alignItems={"center"} gap={1}>
                 <Image
                   alt={charm.name}
-                  width={28}
-                  height={28}
+                  width={24}
+                  height={24}
                   src={charm.imageUrl ?? ""}
                   loading="lazy"
+                  className="max-w-[24px] max-h-[24px]"
                 />
                 <Typography fontSize={{ xs: 16, md: 20 }} fontWeight={100} className="max-sm:max-w-3/4 max-sm:text-ellipsis max-sm:line-clamp-1">
                   {charm.name}
