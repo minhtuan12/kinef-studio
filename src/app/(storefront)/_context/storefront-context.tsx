@@ -65,6 +65,8 @@ type StorefrontContextValue = {
   charmTotal: number;
   totalPrice: number;
   maxCharmsPerOrder: number;
+  openSwiperCart: boolean;
+  setOpenSwiperCart: (next: boolean) => void;
 };
 
 const initialOrderForm: OrderForm = {
@@ -97,6 +99,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   const [isCatalogLoading, setIsCatalogLoading] = useState<boolean>(true);
   const [dataLoadError, setDataLoadError] = useState<string | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [openSwiperCart, setOpenSwiperCart] = useState(false);
 
   useEffect(() => {
     const loadCatalog = async () => {
@@ -321,6 +324,8 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
       charmTotal,
       totalPrice,
       maxCharmsPerOrder: MAX_CHARMS_PER_ORDER,
+      openSwiperCart,
+      setOpenSwiperCart,
     }),
     [
       cases,
@@ -340,6 +345,8 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
       casePrice,
       charmTotal,
       totalPrice,
+      openSwiperCart,
+      setOpenSwiperCart,
     ],
   );
 

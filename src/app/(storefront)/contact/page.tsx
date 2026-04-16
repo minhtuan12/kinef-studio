@@ -31,15 +31,16 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <main className="mx-auto w-full max-w-[1280px] px-8 py-18.5 md:px-12 min-h-[calc(100vh-386px)]">
-      <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+      <Box display={'flex'} gap={{ xs: 0, sm: 8 }} justifyContent={{ xs: 'center', lg: 'space-between' }} alignItems={'center'} flexWrap={'wrap'}>
         <Box>
           <Typography
             component="h1"
             sx={{
               fontFamily: "var(--font-serif)",
               fontSize: {
-                xs: "56px",
-                md: "150px",
+                xs: 80,
+                sm: 100,
+                md: 150,
                 fontWeight: 200,
                 fontStyle: "italic",
               },
@@ -53,26 +54,27 @@ export default function ContactPage() {
             sx={{
               fontFamily: "var(--font-serif)",
               fontSize: {
-                xs: "56px",
-                md: "150px",
+                xs: 80,
+                sm: 100,
+                md: 150,
                 fontWeight: 200,
                 fontStyle: "italic",
               },
               mb: 3,
-              mt: -15,
-              ml: 22,
+              mt: { xs: -8, md: -15 },
+              ml: { xs: 12, md: 22 },
             }}
           >
             touch
           </Typography>
         </Box>
-        <Box mt={8}>
+        <Box mt={{ lg: 8 }}>
           <Typography
             component="p"
             sx={{
               color: "#000000",
               mb: 4,
-              fontSize: 24,
+              fontSize: { xs: 20, md: 24 },
             }}
           >
             Find me if you have any questions or concerns.
@@ -82,7 +84,7 @@ export default function ContactPage() {
             sx={{
               color: "#818080",
               mb: 4,
-              fontSize: 24,
+              fontSize: { xs: 20, md: 24 },
             }}
           >
             Instagram:{" "}
@@ -101,7 +103,7 @@ export default function ContactPage() {
             sx={{
               color: "#818080",
               mb: 4,
-              fontSize: 24,
+              fontSize: { xs: 20, md: 24 },
             }}
           >
             Phone number: <Link className="!underline" href={'tel:(+84)988218053'}>(+84)988218053</Link>
@@ -111,7 +113,7 @@ export default function ContactPage() {
             sx={{
               color: "#818080",
               mb: 4,
-              fontSize: 24,
+              fontSize: { xs: 20, md: 24 },
             }}
           >
             Address: Ho Chi Minh City (online)

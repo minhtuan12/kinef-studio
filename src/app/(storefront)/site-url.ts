@@ -1,4 +1,4 @@
-const FALLBACK_SITE_URL = "https://kinef-studio.vercel.app";
+const FALLBACK_SITE_URL = "https://kinefstudio.com";
 
 export function getSiteUrl() {
   const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();

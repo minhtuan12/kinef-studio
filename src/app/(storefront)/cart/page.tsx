@@ -1,32 +1,26 @@
 "use client";
 
-import { Alert, Button, Typography } from "@mui/material";
+import { Alert, Button, Typography, useMediaQuery } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Trash2, X } from "lucide-react";
 import { useStorefront } from "../_context/storefront-context";
+import { dateFormatter, formatVnd } from "@/lib/constants";
 
-const currencyFormatter = new Intl.NumberFormat("vi-VN");
-const dateFormatter = new Intl.DateTimeFormat("vi-VN", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
-
-function formatVnd(amount: number) {
-  return `${currencyFormatter.format(amount)} đ`;
-}
-
-export default function CartPage() {
+export function useCart() {
   const router = useRouter();
   const {
     cartItems,
     removeCartItem,
     clearCart,
     hydrateBuilderFromCartItem,
+    setOpenSwiperCart,
   } = useStorefront();
+  const disabledCartPage = useMediaQuery('(max-width:1024px)');
   const [actionError, setActionError] = useState<string | null>(null);
+  const pathname = usePathname();
 
   const continueToOrderStep = (itemId: string) => {
     setActionError(null);
@@ -37,6 +31,7 @@ export default function CartPage() {
       );
       return;
     }
+    setOpenSwiperCart(false);
     router.push("/custom-case/order");
   };
 
@@ -49,12 +44,40 @@ export default function CartPage() {
       );
       return;
     }
+    setOpenSwiperCart(false);
     router.push("/custom-case/charms");
   };
 
+  useEffect(() => {
+    if (disabledCartPage && pathname.includes('cart')) {
+      setOpenSwiperCart(true);
+      router.replace('/');
+    }
+  }, [disabledCartPage, pathname]);
+
+  return {
+    actionError,
+    continueToOrderStep,
+    buildAnotherFromItem,
+    cartItems,
+    removeCartItem,
+    clearCart,
+  };
+}
+
+export function CartContent() {
+  const {
+    actionError,
+    continueToOrderStep,
+    buildAnotherFromItem,
+    cartItems,
+    removeCartItem,
+    clearCart,
+  } = useCart();
+
   if (cartItems.length === 0) {
     return (
-      <main className="mx-auto w-full max-w-[1280px] px-6 py-10 md:px-10 min-h-[calc(100vh-386px)]">
+      <>
         <Typography
           component="h1"
           sx={{
@@ -76,7 +99,8 @@ export default function CartPage() {
             mb: 6,
           }}
         >
-          No saved builds yet. Create a custom case and add it from step 3.
+          No saved builds yet. Create a custom case and add it from
+          step 3.
         </Typography>
         <Link href="/custom-case" className="inline-flex">
           <Button
@@ -94,12 +118,12 @@ export default function CartPage() {
             Start building <ArrowRight size={13} />
           </Button>
         </Link>
-      </main>
+      </>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-[1280px] px-6 py-10 md:px-10 min-h-[calc(100vh-386px)]">
+    <>
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <Typography
@@ -145,27 +169,39 @@ export default function CartPage() {
         </div>
       </div>
 
-      {!!actionError ? (
-        <Alert sx={{ mb: 3 }} severity="warning">
-          {actionError}
-        </Alert>
-      ) : null}
+      {
+        !!actionError ? (
+          <Alert sx={{ mb: 3 }} severity="warning">
+            {actionError}
+          </Alert>
+        ) : null
+      }
 
       <div className="space-y-5">
         {cartItems.map((item) => (
-          <section key={item.id} className="border border-black/20 bg-white/80 p-5 md:p-6">
+          <section
+            key={item.id}
+            className="border border-black/20 bg-white/80 p-5 md:p-6"
+          >
             <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <Typography sx={{ fontSize: 16, color: "#5d5d5d" }}>
-                Saved on {dateFormatter.format(new Date(item.addedAt))}
+                Saved on{" "}
+                {dateFormatter.format(new Date(item.addedAt))}
               </Typography>
               <Typography sx={{ fontSize: 18 }}>
-                Total: <strong>{formatVnd(item.totalPrice)}</strong>
+                Total:{" "}
+                <strong>{formatVnd(item.totalPrice)}</strong>
               </Typography>
             </div>
 
             <div className="grid gap-5 border-t border-black/10 pt-4 md:grid-cols-[1.2fr_1fr]">
               <div className="space-y-3">
-                <Typography sx={{ fontSize: 20, fontFamily: "var(--font-serif)" }}>
+                <Typography
+                  sx={{
+                    fontSize: 20,
+                    fontFamily: "var(--font-serif)",
+                  }}
+                >
                   Case
                 </Typography>
                 <div className="flex items-center gap-3">
@@ -177,26 +213,47 @@ export default function CartPage() {
                     loading="lazy"
                   />
                   <div>
-                    <Typography sx={{ fontSize: 20, fontWeight: 300 }}>
+                    <Typography
+                      sx={{
+                        fontSize: 20,
+                        fontWeight: 300,
+                      }}
+                    >
                       {item.caseItem.name}
                     </Typography>
-                    <Typography sx={{ fontSize: 14, color: "#5d5d5d" }}>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: "#5d5d5d",
+                      }}
+                    >
                       {formatVnd(item.caseItem.unitPrice)}
                     </Typography>
                   </div>
                 </div>
 
-                <Typography sx={{ fontSize: 20, fontFamily: "var(--font-serif)", mt: 2 }}>
+                <Typography
+                  sx={{
+                    fontSize: 20,
+                    fontFamily: "var(--font-serif)",
+                    mt: 2,
+                  }}
+                >
                   Charms ({item.charms.length})
                 </Typography>
                 {item.charms.length === 0 ? (
-                  <Typography sx={{ fontSize: 14, color: "#5d5d5d" }}>
+                  <Typography
+                    sx={{ fontSize: 14, color: "#5d5d5d" }}
+                  >
                     No charms selected.
                   </Typography>
                 ) : (
                   <ul className="space-y-2">
                     {item.charms.map((charm) => (
-                      <li key={charm.id} className="flex items-center justify-between gap-3">
+                      <li
+                        key={charm.id}
+                        className="flex items-center justify-between gap-3"
+                      >
                         <div className="flex items-center gap-2">
                           {charm.imageUrl ? (
                             <Image
@@ -208,11 +265,22 @@ export default function CartPage() {
                               loading="lazy"
                             />
                           ) : (
-                            <span aria-hidden>{charm.icon}</span>
+                            <span aria-hidden>
+                              {charm.icon}
+                            </span>
                           )}
-                          <Typography sx={{ fontSize: 16 }}>{charm.name}</Typography>
+                          <Typography
+                            sx={{ fontSize: 16 }}
+                          >
+                            {charm.name}
+                          </Typography>
                         </div>
-                        <Typography sx={{ fontSize: 14, color: "#5d5d5d" }}>
+                        <Typography
+                          sx={{
+                            fontSize: 14,
+                            color: "#5d5d5d",
+                          }}
+                        >
                           {formatVnd(charm.unitPrice)}
                         </Typography>
                       </li>
@@ -222,27 +290,38 @@ export default function CartPage() {
               </div>
 
               <div className="space-y-3 border-t border-black/10 pt-4 md:border-t-0 md:border-l md:border-black/10 md:pl-5 md:pt-0">
-                <Typography sx={{ fontSize: 20, fontFamily: "var(--font-serif)" }}>
+                <Typography
+                  sx={{
+                    fontSize: 20,
+                    fontFamily: "var(--font-serif)",
+                  }}
+                >
                   Customer details
                 </Typography>
                 <div className="space-y-1 text-[15px]">
                   <p>
-                    <strong>Name:</strong> {item.customer.name || "-"}
+                    <strong>Name:</strong>{" "}
+                    {item.customer.name || "-"}
                   </p>
                   <p>
-                    <strong>Instagram:</strong> {item.customer.instagram || "-"}
+                    <strong>Instagram:</strong>{" "}
+                    {item.customer.instagram || "-"}
                   </p>
                   <p>
-                    <strong>Phone:</strong> {item.customer.phoneNumber || "-"}
+                    <strong>Phone:</strong>{" "}
+                    {item.customer.phoneNumber || "-"}
                   </p>
                   <p>
-                    <strong>Model:</strong> {item.customer.phoneModel || "-"}
+                    <strong>Model:</strong>{" "}
+                    {item.customer.phoneModel || "-"}
                   </p>
                   <p>
-                    <strong>Address:</strong> {item.customer.address || "-"}
+                    <strong>Address:</strong>{" "}
+                    {item.customer.address || "-"}
                   </p>
                   <p>
-                    <strong>Note:</strong> {item.customer.notes || "-"}
+                    <strong>Note:</strong>{" "}
+                    {item.customer.notes || "-"}
                   </p>
                 </div>
               </div>
@@ -308,6 +387,12 @@ export default function CartPage() {
           </section>
         ))}
       </div>
-    </main>
+    </>
   );
+}
+
+export default function CartPage() {
+  return <main className="mx-auto w-full max-w-[1280px] px-6 py-10 md:px-10 min-h-[calc(100vh-386px)]">
+    <CartContent />
+  </main>;
 }

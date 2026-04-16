@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import story1 from "@/assets/images/story1.svg";
 import story2 from "@/assets/images/story2.svg";
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function OurStoryPage() {
   return (
-    <main className="mx-auto w-full max-w-[1280px] px-8 pt-14 pb-30 min-h-[calc(100vh-386px)]">
+    <main className="mx-auto w-full max-w-[1280px] px-8 pt-14 pb-30 min-h-[calc(100vh-300px)] lg:min-h-[calc(100vh-386px)]">
       <Typography
         component="h1"
         sx={{
@@ -38,14 +38,14 @@ export default function OurStoryPage() {
           fontStyle: "italic",
           fontSize: { xs: "58px", md: "100px" },
           lineHeight: 1.05,
-          mb: 14,
+          mb: { xs: 8, xl: 14 },
           textAlign: "center",
         }}
       >
         Our story
       </Typography>
 
-      <section className="grid grid-cols-1 gap-14 md:grid-cols-[1fr_auto] relative">
+      <section className="max-xl:hidden grid grid-cols-1 gap-14 md:grid-cols-[1fr_auto] relative">
         <Typography
           component="p"
           sx={{
@@ -109,25 +109,66 @@ export default function OurStoryPage() {
           className="absolute bottom-0 left-[calc(100%-840px)]"
           alt="Decorative Kinef visual inspired by sea motifs"
         />
+      </section>
 
-        {/* <div className="grid grid-cols-2 gap-4">
-          {[story1, story2, story3, story4, story5].map(
-            (image, index) => (
-              <div
-                key={index}
-                className={`relative overflow-hidden border border-black/10 ${index === 0 ? "col-span-2 h-[360px] md:h-[420px]" : "h-[180px] md:h-[220px]"}`}
-              >
-                <Image
-                  src={image}
-                  alt={`Kinef story image ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
-            ),
-          )}
-        </div> */}
+      <section className="xl:hidden relative flex flex-col gap-6 sm:gap-8">
+        <Typography
+          component="p"
+          sx={{
+            color: "#000000",
+            fontSize: { xs: 18, sm: 20, md: 24 },
+            lineHeight: "50px",
+            textAlign: 'justify',
+          }}
+        >
+          Kinef.studio started in 2023 - a few handmade phone cases,
+          then scarves, bags, and other small things tied to the sea.
+          The vibe is Mediterranean: ocean blues, natural textures,
+          simple but clearly not off a shelf. Every piece is made by
+          hand, no two exactly alike - and that's something Kinef
+          intends to keep.
+        </Typography>
+        <Box className="flex flex-col gap-2 sm:gap-3">
+          <Box className="grid grid-cols-12 gap-2 sm:gap-3">
+            <Box className="col-span-10 grid grid-cols-2 gap-2 sm:gap-3">
+              <Image
+                src={story4}
+                className="h-auto w-full rounded-md object-cover"
+                alt="Kinef handcrafted detail with texture and sea-inspired accents"
+                priority
+                sizes="(max-width: 639px) 42vw, (max-width: 1279px) 34vw, 0px"
+              />
+              <Image
+                src={story2}
+                className="h-auto w-full rounded-md object-cover"
+                alt="Kinef Studio handmade piece inspired by coastal Mediterranean colors"
+                priority
+                sizes="(max-width: 639px) 42vw, (max-width: 1279px) 34vw, 0px"
+              />
+            </Box>
+            <Box className="col-span-2 grid grid-rows-2 gap-2 sm:gap-3">
+              <Image
+                src={story3}
+                className="h-full w-full rounded-md object-cover"
+                priority
+                alt="Decorative Kinef visual inspired by sea motifs"
+              />
+              <Image
+                src={story1}
+                className="h-full w-full rounded-md object-cover"
+                alt="Handcrafted Kinef resin phone case in a Mediterranean-inspired setup"
+                priority
+              />
+            </Box>
+          </Box>
+          <Image
+            src={story5}
+            className="h-auto w-full rounded-xl object-cover"
+            alt="Close-up of handcrafted Kinef material and finishing details"
+            priority
+            sizes="(max-width: 1279px) 100vw, 0px"
+          />
+        </Box>
       </section>
     </main>
   );

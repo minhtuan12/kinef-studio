@@ -48,3 +48,8 @@ const currencyFormatter = new Intl.NumberFormat("vi-VN");
 export function formatVnd(amount: number) {
   return `${currencyFormatter.format(amount)} đ`;
 }
+
+export const dateFormatter = new Intl.DateTimeFormat("vi-VN", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});

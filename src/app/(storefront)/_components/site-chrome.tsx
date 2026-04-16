@@ -1,11 +1,13 @@
 "use client";
 
-import { Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useStorefront } from "../_context/storefront-context";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
+import { BookText, ContactRound, Home, Menu, ShoppingBag, ShoppingCart, X } from "lucide-react";
+import { useState } from "react";
 
 function NavLink({ href, label }: { href: string; label: string }) {
   const pathname = usePathname();
@@ -47,7 +49,7 @@ export function AnnouncementBar() {
           textTransform: "uppercase",
           letterSpacing: "0.05em",
           fontFamily: "var(--font-sc), serif",
-          fontSize: "24px",
+          fontSize: { md: "24px" },
         }}
       >
         New charm collection just dropped - while stock lasts
@@ -56,18 +58,90 @@ export function AnnouncementBar() {
   );
 }
 
+const links = [
+  {
+    href: '/',
+    label: 'home',
+    icon: <Home />,
+    enabledMobile: true,
+  },
+  {
+    href: '/custom-case',
+    label: 'shop',
+    icon: <ShoppingBag />,
+    enabledMobile: false,
+  },
+  {
+    href: "/our-story",
+    label: 'about',
+    icon: <BookText />,
+    enabledMobile: false,
+  },
+  {
+    href: "/contact",
+    label: 'contact',
+    icon: <ContactRound />,
+    enabledMobile: false,
+  },
+  {
+    href: "/cart",
+    label: 'cart',
+    icon: <ShoppingCart />,
+    enabledMobile: true,
+  },
+]
+
 export function SiteHeader() {
-  const { cartCount } = useStorefront();
+  const { cartCount, setOpenSwiperCart } = useStorefront();
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpen(newOpen);
+  };
+
+  const DrawerList = (
+    <Box sx={{ width: { xs: '80vw', sm: 300 } }} pl={1.5} role="presentation" onClick={toggleDrawer(false)}>
+      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={70}>
+        <Image
+          src={logo}
+          alt="Kinef Studio logo"
+          className="w-20 h-auto lg:w-auto max-w-[188px] max-h-[122px] -mt-1"
+          priority
+        />
+      </Box>
+      <Divider />
+      <List>
+        {links.map(({ href, label, icon }) => (
+          <ListItem key={href} disablePadding className="mb-2">
+            {href === '/cart' ? <ListItemButton onClick={() => setOpenSwiperCart(true)}>
+              <ListItemIcon className="!min-w-11">
+                {icon}
+              </ListItemIcon>
+              <ListItemText primary={`${label}(${cartCount})`} sx={{ textTransform: 'capitalize' }} className="[&>.MuiTypography-root]:!font-serif [&>.MuiTypography-root]:!text-[24px]" />
+            </ListItemButton> :
+              <Link href={href} className="!w-full">
+                <ListItemButton>
+                  <ListItemIcon className="!min-w-11">
+                    {icon}
+                  </ListItemIcon>
+                  <ListItemText primary={label} sx={{ textTransform: 'capitalize' }} className="[&>.MuiTypography-root]:!font-serif [&>.MuiTypography-root]:!text-[24px]" />
+                </ListItemButton>
+              </Link>
+            }
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   return (
     <header className="sticky top-0 z-40 border-b border-black/10 bg-[#fffdfa]">
-      <div className="relative mx-auto flex h-[136px] w-full max-w-[1280px] items-center justify-between px-6 md:px-10">
+      <div className="relative mx-auto flex h-[80px] lg:h-[136px] w-full max-w-[1280px] items-center justify-end lg:justify-between px-6 md:px-10">
         <nav
-          className="flex items-center gap-6 md:gap-10 md:mt-6"
+          className="lg:flex items-center gap-6 md:gap-10 md:mt-6 hidden"
           aria-label="Primary"
         >
-          <NavLink href="/custom-case" label="shop" />
-          <NavLink href="/our-story" label="about" />
-          <NavLink href="/contact" label="contact" />
+          {links.map(l => !l.enabledMobile ? <NavLink key={l.href} href={l.href} label={l.label} /> : null)}
         </nav>
         <Link
           href="/"
@@ -77,11 +151,11 @@ export function SiteHeader() {
           <Image
             src={logo}
             alt="Kinef Studio logo"
-            className="h-auto w-auto max-w-[188px] max-h-[122px] -mt-1"
+            className="w-26 h-auto lg:w-auto max-w-[188px] max-h-[122px] -mt-1"
             priority
           />
         </Link>
-        <div className="text-right md:mt-6">
+        <div className="text-right md:mt-6 hidden lg:block">
           <Link href={'/cart'} className="w-fit">
             <Typography
               component="span"
@@ -99,6 +173,12 @@ export function SiteHeader() {
               cart({cartCount})
             </Typography>
           </Link>
+        </div>
+        <div className="block lg:hidden">
+          <Menu onClick={toggleDrawer(true)} />
+          <Drawer open={open} onClose={toggleDrawer(false)} anchor="right" slotProps={{ paper: { className: '!h-full' } }}>
+            {DrawerList}
+          </Drawer>
         </div>
       </div>
     </header>
@@ -125,7 +205,7 @@ export function SiteFooter() {
           width: "100%",
         }}
       />
-      <div className="mx-auto justify-between flex items-center w-full max-w-[1280px] gap-4 px-6 py-12 md:px-36">
+      <div className="mx-auto md:justify-between flex items-center w-full max-w-[1280px] gap-4 px-6 py-12 md:px-36 flex-wrap justify-center">
         {links.map((item) =>
           item.external ? (
             <a
@@ -134,7 +214,7 @@ export function SiteFooter() {
               target="_blank"
               rel="me noopener noreferrer"
               aria-label="Kinef Studio Instagram profile"
-              className="text-[24px] font-[200] text-black w-fit transition hover:text-black"
+              className="text-[18px] lg:text-[24px] font-[200] text-black w-fit transition hover:text-black"
             >
               {item.label}
             </a>
@@ -142,7 +222,7 @@ export function SiteFooter() {
             <Link
               key={item.label}
               href={item.href}
-              className="text-[24px] font-[200] text-black w-fit transition hover:text-black"
+              className="text-[18px] lg:text-[24px] font-[200] text-black w-fit transition hover:text-black"
             >
               {item.label}
             </Link>
@@ -155,7 +235,7 @@ export function SiteFooter() {
           sx={{
             color: "#fff",
             textTransform: "uppercase",
-            fontSize: "24px",
+            fontSize: { sm: '16px', md: "24px" },
             fontWeight: 200,
           }}
         >

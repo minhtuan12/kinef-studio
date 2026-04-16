@@ -4,6 +4,7 @@ import { Alert, Box, Card, CardContent, Skeleton, Typography } from "@mui/materi
 import { useStorefront } from "../_context/storefront-context";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN");
 
@@ -18,7 +19,12 @@ export default function CustomCasePage() {
     setSelectedCase,
     dataLoadError,
     isCatalogLoading,
+    setOpenSwiperCart,
   } = useStorefront();
+
+  useEffect(() => {
+    setOpenSwiperCart(false);
+  }, [setOpenSwiperCart]);
 
   return (
     <>
@@ -28,7 +34,7 @@ export default function CustomCasePage() {
           color: "#838383",
           mt: 3.5,
           mb: 10,
-          fontSize: "24px",
+          fontSize: { xs: '20px', md: "24px" },
           fontWeight: 100,
           fontStyle: "italic",
         }}
@@ -46,7 +52,7 @@ export default function CustomCasePage() {
         ) : null
       }
 
-      <section className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
+      <section className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-3">
         {(isCatalogLoading ? Array.from(new Array(3)) : cases).map((item, index) => {
           const isSelected = selectedCase?.id === item?.id;
           const finalPrice = !isCatalogLoading ? Math.round(

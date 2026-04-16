@@ -62,14 +62,14 @@ export default async function ConfirmationPage({ params }: PageProps) {
     const currentCopy = stateCopy[paymentState];
 
     return (
-        <main className="mx-auto flex min-h-[70vh] w-full max-w-[1280px] flex-col bg-[radial-gradient(circle_at_top,_#f8f4f0_0%,_#ffffff_48%)] px-6 py-14 text-center md:px-10 min-h-[calc(100vh-386px)]">
+        <main className="mx-auto flex min-h-[70vh] w-full max-w-[1280px] flex-col bg-[radial-gradient(circle_at_top,_#f8f4f0_0%,_#ffffff_48%)] px-6 py-14 text-center md:px-10 min-h-[calc(100vh-298px)] lg:min-h-[calc(100vh-386px)]">
             <Typography
                 sx={{
                     textTransform: "uppercase",
                     letterSpacing: "0.2em",
                     color: "#838383",
                     mb: 5,
-                    fontSize: 24,
+                    fontSize: { xs: 20, sm: 24 },
                 }}
             >
                 {currentCopy.eyebrow}
@@ -79,7 +79,7 @@ export default async function ConfirmationPage({ params }: PageProps) {
                 <Typography
                     sx={{
                         fontFamily: "var(--font-serif)",
-                        fontSize: { xs: "34px", md: "52px" },
+                        fontSize: { xs: "28px", sm: "52px" },
                         mb: 2,
                     }}
                 >
@@ -133,7 +133,7 @@ export default async function ConfirmationPage({ params }: PageProps) {
                 }
             </section>
 
-            <div className="mt-8 flex justify-center gap-3">
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <a
                     href="https://instagram.com/kinef.studio"
                     target="_blank"

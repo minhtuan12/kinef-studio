@@ -208,7 +208,7 @@ export default function OrderPage() {
     () => (
       <section className="border border-black/20">
         <Box
-          sx={{ borderBottom: "1px solid #A3A3A3", py: 1.5, px: 3 }}
+          sx={{ borderBottom: "1px solid #A3A3A3", py: 1.5, px: { xs: 2, md: 3 } }}
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
@@ -216,7 +216,7 @@ export default function OrderPage() {
           <Typography
             sx={{
               fontWeight: 100,
-              fontSize: 24,
+              fontSize: { xs: 18, md: 24 },
             }}
           >
             Base case: {selectedCase?.name ?? "-"}
@@ -225,14 +225,14 @@ export default function OrderPage() {
             {formatVnd(casePrice)}
           </Typography>
         </Box>
-        <Box sx={{ borderBottom: "1px solid #A3A3A3", py: 1.5, px: 3 }}>
-          <Typography fontSize={24} fontWeight={100} mb={2}>
+        <Box sx={{ borderBottom: "1px solid #A3A3A3", py: 1.5, px: { xs: 2, md: 3 } }}>
+          <Typography fontSize={{ xs: 18, md: 24 }} fontWeight={100} mb={2}>
             Charm:
           </Typography>
           {selectedCharms.map((charm) => (
             <div
               key={charm.id}
-              className="contents flex items-center justify-between pl-5"
+              className="contents flex items-center justify-between pl-0 md:pl-5 gap-2"
             >
               <Box display={"flex"} alignItems={"center"} gap={1}>
                 <Image
@@ -242,11 +242,11 @@ export default function OrderPage() {
                   src={charm.imageUrl ?? ""}
                   loading="lazy"
                 />
-                <Typography fontSize={20} fontWeight={100}>
+                <Typography fontSize={{ xs: 16, md: 20 }} fontWeight={100} className="max-sm:max-w-3/4 max-sm:text-ellipsis max-sm:line-clamp-1">
                   {charm.name}
                 </Typography>
               </Box>
-              <Typography sx={{ fontWeight: 600, fontSize: 16 }}>
+              <Typography sx={{ fontWeight: 600, fontSize: 16 }} className="max-sm:min-w-20 text-right">
                 {formatVnd(
                   Math.round(
                     (charm.price *
@@ -265,7 +265,7 @@ export default function OrderPage() {
           justifyContent={"space-between"}
           alignItems={"center"}
         >
-          <Typography sx={{ fontWeight: 100, fontSize: 24 }}>
+          <Typography sx={{ fontWeight: 100, fontSize: { xs: 18, md: 24 } }}>
             Total:
           </Typography>
           <Typography sx={{ fontWeight: 600, fontSize: 16 }}>
@@ -296,7 +296,7 @@ export default function OrderPage() {
         component="h1"
         sx={{
           fontFamily: "var(--font-serif)",
-          fontSize: { xs: "40px", md: "40px" },
+          fontSize: { xs: "30px", md: "40px" },
           mb: 1,
           mt: 5,
         }}

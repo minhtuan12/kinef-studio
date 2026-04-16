@@ -13,7 +13,7 @@ function formatVnd(amount: number) {
 }
 
 export default function SelectCharmPage() {
-  const ITEMS_PER_PAGE = 30;
+  const ITEMS_PER_PAGE = 15;
   const router = useRouter();
   const {
     charms,
@@ -57,7 +57,7 @@ export default function SelectCharmPage() {
 
   return (
     <>
-      <Box sx={{ paddingInline: 2 }}>
+      <Box sx={{ paddingInline: { xs: 0, md: 2 } }}>
         <Typography
           component="h1"
           sx={{
@@ -85,7 +85,7 @@ export default function SelectCharmPage() {
         </Typography>
       </Box>
 
-      <div className="mt-8 grid grid-cols-2 gap-5 space-y-4 md:grid-cols-5 md:max-w-[1080px] mx-auto">
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 lg:space-y-4 md:max-w-[1080px] mx-auto">
         {currentPageCharms.map((charm, index) => {
           const soldOut = charm.stock === 0 || !charm.isActive;
           const isSelected = selectedCharms.some(
@@ -96,7 +96,7 @@ export default function SelectCharmPage() {
               type="button"
               key={index}
               disabled={soldOut}
-              className={`relative flex flex-col justify-between min-h-[150px] border p-2 transition md:h-[182px] md:w-[182px] ${isSelected
+              className={`rounded-md lg:rounded-none relative flex lg:flex-col justify-between min-h-[150px] border px-2 sm:px-3 py-2 lg:p-2 transition lg:h-[182px] lg:w-[182px] ${isSelected
                 ? "border-black bg-black/10"
                 : "border-black bg-[#fffdfa]"
                 } ${soldOut ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-black/5"}`}
@@ -107,27 +107,26 @@ export default function SelectCharmPage() {
                   sold out
                 </span>
               ) : null}
-              <div className="relative aspect-[6/5] w-full mx-auto h-[120px] mt-1">
+              <div className="relative lg:aspect-[6/5] w-1/2 lg:w-full mx-auto h-[120px] mt-1">
                 <Image
                   src={charm.imageUrl ?? ""}
                   alt={charm.name}
                   fill
-                  className="object-scale-down"
+                  className="object-scale-down !max-h-30"
                   priority
                 />
               </div>
-              <Box sx={{ flex: 1, display: 'flex', justifyContent: 'end', flexDirection: 'column' }}>
+              <Box sx={{ flex: 1, display: 'flex', justifyContent: { xs: 'center', lg: 'end' }, flexDirection: 'column' }}>
                 <Tooltip title={charm.name}>
                   <Typography
                     sx={{
                       fontFamily: "var(--font-serif)",
-                      fontSize: "14px",
                       fontWeight: 200,
                       textAlign: "center",
                       color: "#000000",
                       lineHeight: 1,
                     }}
-                    className="line-clamp-2"
+                    className="line-clamp-3 lg:line-clamp-2 !text-[18px] lg:!text-[14px]"
                   >
                     {charm.name}
                   </Typography>
@@ -135,10 +134,10 @@ export default function SelectCharmPage() {
                 <Typography
                   sx={{
                     color: "#000000",
-                    mt: 0.5,
-                    fontSize: "8px",
+                    mt: { xs: 1, md: 0.5 },
                     textAlign: "center",
                   }}
+                  className="xs:!text-[14px] lg:!text-[8px]"
                 >
                   {formatVnd(
                     Math.round(
@@ -159,7 +158,13 @@ export default function SelectCharmPage() {
           <Pagination
             page={page}
             count={pageCount}
-            onChange={(_, value) => setPage(value)}
+            onChange={(_, value) => {
+              setPage(value);
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+              })
+            }}
             shape="rounded"
             sx={{
               "& .MuiPaginationItem-root": {
@@ -170,7 +175,7 @@ export default function SelectCharmPage() {
         </Box>
       }
 
-      <Box mt={9} paddingInline={7.5}>
+      <Box mt={9} paddingInline={{ xs: 0, md: 7.5 }}>
         <Typography
           sx={{
             fontFamily: "var(--font-serif)",
@@ -193,48 +198,6 @@ export default function SelectCharmPage() {
           Nên chọn ít nhất 10 charms để có thể phủ kín mặt ốp.
         </Typography>
       </Box>
-
-      {/* <div className="mt-6 border-y border-black/15 py-4">
-        <div className="mb-2 text-[11px] uppercase tracking-[0.2em] text-black/60">
-          Selected {selectedCharms.length}/{maxCharmsPerOrder}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {selectedCharms.length === 0 ? (
-            <Typography
-              sx={{
-                color: "#838383",
-                fontFamily: "var(--font-serif)",
-                fontStyle: "italic",
-              }}
-            >
-              Nothing selected yet
-            </Typography>
-          ) : (
-            selectedCharms.map((charm) => (
-              <div
-                key={charm.id}
-                className="flex items-center gap-2 border border-black/20 px-3 py-1 text-sm"
-              >
-                <span>{charm.icon}</span>
-                <span>{charm.name}</span>
-                <button
-                  type="button"
-                  className="text-lg leading-none text-black/60"
-                  onClick={() => removeCharm(charm.id)}
-                >
-                  ×
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-      </div> */}
-
-      {/* {selectedCharms.length >= maxCharmsPerOrder ? (
-        <Alert severity="info" sx={{ mt: 3 }}>
-          Maximum {maxCharmsPerOrder} charms selected.
-        </Alert>
-      ) : null} */}
     </>
   );
 }

@@ -19,8 +19,8 @@ export function BottomAction() {
 	const backHref = isLastStep ? '/custom-case/charms' : (isSecondStep ? '/custom-case' : '/');
 	const nextHref = isSecondStep ? '/custom-case/order' : '/custom-case/charms';
 
-	return !isLastStep ? <div className="relative py-28 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-		<Link href={backHref} className="flex items-center gap-1 text-[15px] ">
+	return !isLastStep ? <div className="relative py-16 md:py-28 flex items-start justify-between gap-4 sm:items-center max-sm:flex-col max-sm:items-center max-sm:gap-8">
+		<Link href={backHref} className="hidden items-center gap-1 text-[15px] sm:flex">
 			<ArrowLeft size={13} />{backText}
 		</Link>
 		<Typography
@@ -38,6 +38,9 @@ export function BottomAction() {
 		>
 			step {currentStep} of 3
 		</Typography>
+		<Link href={backHref} className="flex items-center gap-1 text-[15px] sm:hidden">
+			<ArrowLeft size={13} />{backText}
+		</Link>
 		<Button
 			variant="outlined"
 			disabled={(!selectedCase && currentStep === 1) || (selectedCharms?.length === 0 && currentStep === 2)}
