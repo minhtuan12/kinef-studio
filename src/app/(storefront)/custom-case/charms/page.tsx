@@ -116,7 +116,7 @@ export default function SelectCharmPage() {
                   priority
                 />
               </div>
-              <div className="flex flex-1 !justify-center lg:!justify-end flex-col">
+              <Box sx={{ flex: 1, display: 'flex', justifyContent: { xs: 'center', lg: 'end' }, flexDirection: 'column', mt: { xs: 4, sm: 0 } }}>
                 <Tooltip title={charm.name}>
                   <Typography
                     sx={{
@@ -147,7 +147,7 @@ export default function SelectCharmPage() {
                     ),
                   )}
                 </Typography>
-              </div>
+              </Box>
             </button>
           );
         })}
