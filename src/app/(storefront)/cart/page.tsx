@@ -237,6 +237,7 @@ export function CartContent() {
                     fontSize: 20,
                     fontFamily: "var(--font-serif)",
                     mt: 2,
+                    mb: { xs: 1, lg: 0 }
                   }}
                 >
                   Charms ({item.charms.length})
@@ -271,6 +272,7 @@ export function CartContent() {
                           )}
                           <Typography
                             sx={{ fontSize: 16 }}
+                            className="line-clamp-1"
                           >
                             {charm.name}
                           </Typography>
@@ -280,6 +282,7 @@ export function CartContent() {
                             fontSize: 14,
                             color: "#5d5d5d",
                           }}
+                          className="max-lg:min-w-20 text-right"
                         >
                           {formatVnd(charm.unitPrice)}
                         </Typography>
