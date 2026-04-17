@@ -19,14 +19,22 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    title: "Kinef Studio - Handmade and Design Custom Phone Cases. Bringing all things ocean to you",
+    title: "Kinef Studio - Handmade and Design Custom Phone Cases.",
     description:
       "Each case is handmade to order. Bringing all things ocean to you 🐚🌺✨. Build your own one-of-a-kind custom phone case with curated charms.",
     url: "/",
+    images: [
+      {
+        url: 'https://kinefstudio.com/story5.svg',
+        width: 1200,
+        height: 630,
+        alt: 'Kinef Studio',
+      },
+    ],
   },
   twitter: {
     card: "summary",
-    title: "Kinef Studio - Handmade and Design Custom Phone Cases. Bringing all things ocean to you",
+    title: "Kinef Studio - Handmade and Design Custom Phone Cases.",
     description:
       "Each case is handmade to order. Bringing all things ocean to you 🐚🌺✨. Build your own one-of-a-kind custom phone case with curated charms.",
   },

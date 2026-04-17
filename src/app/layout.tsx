@@ -94,14 +94,6 @@ export const metadata: Metadata = {
     description: "Handmade custom phone cases with one-of-a-kind charms.",
     siteName: "Kinef Studio",
     url: "/",
-    images: [
-      {
-        url: 'https://kinefstudio.com/story5.svg',
-        width: 1200,
-        height: 630,
-        alt: 'Kinef Studio',
-      },
-    ],
   },
   twitter: {
     card: "summary",
