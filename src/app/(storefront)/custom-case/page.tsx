@@ -95,6 +95,7 @@ export default function CustomCasePage() {
                       src={item.imageUrl}
                       alt={`${item.name} resin custom case base`}
                       className={index === 2 ? 'mt-3' : ''}
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </Box>
                   <Typography

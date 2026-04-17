@@ -131,7 +131,8 @@ export default function HomePage() {
           src={banner}
           alt="Handmade Kinef custom resin phone case with curated charms"
           className="object-cover max-md:w-full"
-          loading="lazy"
+          sizes="(max-width: 768px) 100vw, 599px"
+          priority
         />
       </section>
 
