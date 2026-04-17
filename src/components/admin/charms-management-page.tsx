@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { Card, ConfigProvider, Empty, Modal } from "antd";
+import { Card, ConfigProvider, Empty, Modal, Pagination } from "antd";
 import {
     Image as ImageIcon,
     Loader2,
@@ -34,6 +34,8 @@ import {
 import type { AdminCharm, CharmForm } from "./admin-types";
 
 type FilterMode = "all" | "active" | "inactive" | "low_stock";
+const DEFAULT_PAGE_SIZE = 15;
+const PAGE_SIZE_OPTIONS = [15, 30, 45, 100];
 
 function toCharmForm(item: AdminCharm): CharmForm {
     return {
@@ -137,6 +139,8 @@ export default function CharmsManagementPage() {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [previewImageUrl, setPreviewImageUrl] = useState("");
     const [isEditorOpen, setIsEditorOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
     const loadCharms = useCallback(async () => {
         if (!hasAdminKey) {
@@ -223,6 +227,34 @@ export default function CharmsManagementPage() {
             return matchesSearch && matchesFilter;
         });
     }, [filter, items, search]);
+
+    const totalPages = useMemo(
+        () => Math.max(1, Math.ceil(visibleItems.length / pageSize)),
+        [pageSize, visibleItems.length],
+    );
+
+    const paginatedItems = useMemo(() => {
+        const startIndex = (currentPage - 1) * pageSize;
+        return visibleItems.slice(startIndex, startIndex + pageSize);
+    }, [currentPage, pageSize, visibleItems]);
+
+    const currentRangeText = useMemo(() => {
+        if (!visibleItems.length) {
+            return "Showing 0 of 0";
+        }
+
+        const start = (currentPage - 1) * pageSize + 1;
+        const end = Math.min(currentPage * pageSize, visibleItems.length);
+        return `Showing ${start}-${end} of ${visibleItems.length}`;
+    }, [currentPage, pageSize, visibleItems.length]);
+
+    useEffect(() => {
+        setCurrentPage((page) => Math.min(page, totalPages));
+    }, [totalPages]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search]);
 
     const saveCharm = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -394,8 +426,9 @@ export default function CharmsManagementPage() {
                                 <Loader2 className="animate-spin" size={40} />
                             </div>
                         ) : visibleItems.length ? (
-                            <div className={styles.managementCardGrid}>
-                                {visibleItems.map((item) => (
+                            <>
+                                <div className={styles.managementCardGrid}>
+                                    {paginatedItems.map((item) => (
                                     <CharmItem
                                         key={item.id}
                                         item={item}
@@ -403,8 +436,26 @@ export default function CharmsManagementPage() {
                                         removeCharm={removeCharm}
                                         toggleCharmStatus={toggleCharmStatus}
                                     />
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+
+                                <div className={styles.paginationBar}>
+                                    <span className={styles.paginationSummary}>
+                                        {currentRangeText}
+                                    </span>
+                                    <Pagination
+                                        current={currentPage}
+                                        pageSize={pageSize}
+                                        total={visibleItems.length}
+                                        pageSizeOptions={PAGE_SIZE_OPTIONS}
+                                        showSizeChanger
+                                        onChange={(page, size) => {
+                                            setCurrentPage(page);
+                                            setPageSize(size);
+                                        }}
+                                    />
+                                </div>
+                            </>
                         ) : (
                             <div className={styles.dataGridEmpty}>
                                 {" "}
