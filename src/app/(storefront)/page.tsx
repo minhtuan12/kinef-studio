@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: 'https://kinefstudio.com/story5.svg',
+        url: 'https://kinefstudio.com/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Kinef Studio',
