@@ -3,7 +3,6 @@ import { Cormorant_Garamond, Cormorant_SC, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { getSiteUrl } from "./(storefront)/site-url";
-import introImage from '@/assets/images/story5.svg';
 
 const outfit = Inter({
   variable: "--font-sans",
@@ -97,7 +96,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: introImage,
+        url: 'https://kinefstudio.com/story5.svg',
         width: 1200,
         height: 630,
         alt: 'Kinef Studio',
