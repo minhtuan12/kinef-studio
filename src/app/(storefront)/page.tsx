@@ -9,7 +9,7 @@ import FullWidthDivider from "./_components/full-divider";
 export const metadata: Metadata = {
   title: "Custom Phone Cases",
   description:
-    "Handmade custom phone cases by Kinef Studio. Choose a base, select one-of-a-kind charms, and place your order online.",
+    "Handmade and Design custom phone cases by Kinef Studio. Bringing all things ocean to you 🐚🌺✨. Choose a base, select one-of-a-kind charms, and place your order online.",
   keywords: [
     "custom phone case",
     "handmade phone case",
@@ -19,16 +19,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    title: "Kinef Studio - Custom Phone Cases",
+    title: "Kinef Studio - Handmade and Design Custom Phone Cases. Bringing all things ocean to you",
     description:
-      "Each case is handmade to order. Build your own one-of-a-kind custom phone case with curated charms.",
+      "Each case is handmade to order. Bringing all things ocean to you 🐚🌺✨. Build your own one-of-a-kind custom phone case with curated charms.",
     url: "/",
   },
   twitter: {
     card: "summary",
-    title: "Kinef Studio - Custom Phone Cases",
+    title: "Kinef Studio - Handmade and Design Custom Phone Cases. Bringing all things ocean to you",
     description:
-      "Each case is handmade to order. Build your own one-of-a-kind custom phone case with curated charms.",
+      "Each case is handmade to order. Bringing all things ocean to you 🐚🌺✨. Build your own one-of-a-kind custom phone case with curated charms.",
   },
 };
 

@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Cormorant_SC, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { getSiteUrl } from "./(storefront)/site-url";
+import introImage from '@/assets/images/story5.svg';
 
 const outfit = Inter({
   variable: "--font-sans",
@@ -64,6 +65,10 @@ export const metadata: Metadata = {
     "phone case charms",
     "kinef studio instagram",
     "@kinef.studio",
+    "kinef",
+    "ocean",
+    "kinefstudio",
+    "handmade",
   ],
   authors: [{ name: "Kinef Studio", url: instagramUrl }],
   creator: "@kinef.studio",
@@ -90,6 +95,14 @@ export const metadata: Metadata = {
     description: "Handmade custom phone cases with one-of-a-kind charms.",
     siteName: "Kinef Studio",
     url: "/",
+    images: [
+      {
+        url: introImage,
+        width: 1200,
+        height: 630,
+        alt: 'Kinef Studio',
+      },
+    ],
   },
   twitter: {
     card: "summary",
