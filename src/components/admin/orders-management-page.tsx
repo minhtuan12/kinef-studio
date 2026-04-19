@@ -52,9 +52,6 @@ export default function OrdersManagementPage() {
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">(
     "all",
   );
-  const [paymentFilter, setPaymentFilter] = useState<PaymentStatus | "all">(
-    "all",
-  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const loadOrders = useCallback(async () => {
@@ -113,13 +110,9 @@ export default function OrdersManagementPage() {
       const matchesSearch = haystack.includes(normalizedSearch);
       const matchesStatus =
         statusFilter === "all" || order.status === statusFilter;
-      const matchesPayment =
-        paymentFilter === "all" ||
-        (order.payment?.status ?? "unpaid") === paymentFilter;
-
-      return matchesSearch && matchesStatus && matchesPayment;
+      return matchesSearch && matchesStatus;
     });
-  }, [orders, paymentFilter, search, statusFilter]);
+  }, [orders, search, statusFilter]);
 
   useEffect(() => {
     if (!filteredOrders.length) {
@@ -309,27 +302,6 @@ export default function OrdersManagementPage() {
                     {value === "all"
                       ? "all status"
                       : orderStatusLabel(value)}
-                  </button>
-                ))}
-              </div>
-              <div className={styles.filterRow}>
-                {(
-                  ["all", ...PAYMENT_STATUSES] as Array<
-                    PaymentStatus | "all"
-                  >
-                ).map((value) => (
-                  <button
-                    key={value}
-                    className={cx(
-                      styles.filterChip,
-                      paymentFilter === value &&
-                      styles.filterChipActive,
-                    )}
-                    onClick={() => setPaymentFilter(value)}
-                  >
-                    {value === "all"
-                      ? "all payment"
-                      : paymentStatusLabel(value)}
                   </button>
                 ))}
               </div>

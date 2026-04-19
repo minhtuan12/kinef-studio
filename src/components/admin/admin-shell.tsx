@@ -175,7 +175,7 @@ function AdminShellInner({ children }: { children: ReactNode }) {
               <Menu size={18} />
             </button>
             <div className={styles.sidebarFooter}>
-              <Link href="/" className={styles.storefrontLink}>
+              <Link href={process.env.NEXT_PUBLIC_SITE_URL!} className={styles.storefrontLink}>
                 <ArrowLeft size={15} />
                 <span className="font-semibold">Back to storefront</span>
               </Link>

@@ -11,7 +11,7 @@ export async function GET(request: Request) {
 
   try {
     await connectToDatabase();
-    const orders = await Order.find().sort({ createdAt: -1 }).lean();
+    const orders = await Order.find({ 'payment.status': 'paid' }).sort({ createdAt: -1 }).lean();
 
     return NextResponse.json({
       orders: orders.map((order) => ({
