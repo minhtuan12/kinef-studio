@@ -5,6 +5,11 @@ import { Order } from "@/models/Order";
 import { NextResponse } from "next/server";
 
 type WebhookPayload = Record<string, unknown>;
+type SepayOrderSearchResult = {
+  order_id?: string | null;
+  order_invoice_number?: string | null;
+  order_description?: string | null;
+};
 
 function asRecord(value: unknown): Record<string, unknown> {
   if (typeof value === "object" && value !== null) {
@@ -54,6 +59,37 @@ function resolveInvoiceCode(payload: WebhookPayload) {
   ]);
 
   return typeof raw === "string" ? raw.trim() : "";
+}
+
+function resolveTransferAmount(payload: WebhookPayload) {
+  const raw = getFromPayload(payload, ["transferAmount"]);
+
+  if (typeof raw === "number" && Number.isFinite(raw)) {
+    return raw;
+  }
+
+  if (typeof raw === "string") {
+    const parsed = Number(raw.trim());
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+}
+
+function resolveOrderCodeFromSearchResults(
+  sepayPaymentCode: string,
+  results: SepayOrderSearchResult[],
+) {
+  const exactOrder = results.find((order) => order.order_id === sepayPaymentCode);
+  if (exactOrder?.order_invoice_number) {
+    return exactOrder.order_invoice_number;
+  }
+
+  if (results.length === 1 && results[0]?.order_invoice_number) {
+    return results[0].order_invoice_number;
+  }
+
+  return null;
 }
 
 function resolveApiKeyFromAuthorizationHeader(authorizationHeader: string | null) {
@@ -123,8 +159,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Missing payment code." }, { status: 400 });
     }
 
-    const sepayOrder = await client.order.all({ q: sepayPaymentCode });
-    const orderCode = sepayOrder.data.data?.[0]?.order_invoice_number ?? null;
+    const paidAmount = resolveTransferAmount(payload);
+    if (paidAmount === null) {
+      return NextResponse.json({ message: "Missing transfer amount." }, { status: 400 });
+    }
+
+    const sepayOrders = await client.order.all({ q: sepayPaymentCode });
+    const orderCode = resolveOrderCodeFromSearchResults(
+      sepayPaymentCode,
+      Array.isArray(sepayOrders.data.data) ? sepayOrders.data.data : [],
+    );
+
+    if (!orderCode) {
+      return NextResponse.json(
+        { message: "Unable to resolve order code from SePay webhook." },
+        { status: 404 },
+      );
+    }
 
     await connectToDatabase();
 
@@ -143,8 +194,8 @@ export async function POST(request: Request) {
       });
     }
 
-    order.payment.paidAmount = payload.transferAmount;
-    if (payload.transferAmount === order.total) {
+    order.payment.paidAmount = paidAmount;
+    if (paidAmount === order.total) {
       order.payment.status = "paid";
     } else {
       order.payment.status = 'partial';
