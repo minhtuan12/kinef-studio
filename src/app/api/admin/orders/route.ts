@@ -26,6 +26,7 @@ export async function GET(request: Request) {
         status: order.status,
         payment: order.payment,
         createdAt: order.createdAt,
+        notes: order.notes,
       })),
     });
   } catch {
